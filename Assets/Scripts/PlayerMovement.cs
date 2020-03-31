@@ -14,6 +14,8 @@ public class PlayerMovement : MonoBehaviour
 
     private float hInput, vInput, multiplier = 1;
     private Quaternion rotation;
+    private Vector3 lastMousePosition;
+    private bool mouseMoving = false;
 
     // Start is called before the first frame update
     void Start()
@@ -26,8 +28,16 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //CheckMouseMovement();
+
         hInput = Input.GetAxis("Horizontal") * multiplier;
         vInput = Input.GetAxis("Vertical") * multiplier;
+
+        if (Input.GetMouseButtonDown(1))
+            animator.SetBool("aiming", true);
+        if(Input.GetMouseButtonUp(1))
+            animator.SetBool("aiming", false);
+
 
         if (Input.GetKey(KeyCode.LeftShift))
             multiplier = Mathf.Lerp(multiplier, 2, Time.deltaTime * sprintSwitchSMoothness);
@@ -47,5 +57,16 @@ public class PlayerMovement : MonoBehaviour
         rotation.z = transform.localRotation.z;
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * playerRotationSmoothness);
         //transform.localRotation = rotation;
+    }
+
+    private void CheckMouseMovement()
+    {
+        if (Input.mousePosition != lastMousePosition)
+        {
+            lastMousePosition = Input.mousePosition;
+            mouseMoving = true;
+        }
+        else
+            mouseMoving = false;
     }
 }
