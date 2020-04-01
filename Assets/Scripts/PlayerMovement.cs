@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     private float hInput, vInput, multiplier = 1;
     private Quaternion rotation;
     private Vector3 lastMousePosition;
-    private bool mouseMoving = false;
+    private bool mouseMoving = false, isAimaing = false;
 
     // Start is called before the first frame update
     void Start()
@@ -34,9 +34,9 @@ public class PlayerMovement : MonoBehaviour
         vInput = Input.GetAxis("Vertical") * multiplier;
 
         if (Input.GetMouseButtonDown(1))
-            animator.SetBool("aiming", true);
+            animator.SetBool("aiming", isAimaing = true);
         if(Input.GetMouseButtonUp(1))
-            animator.SetBool("aiming", false);
+            animator.SetBool("aiming", isAimaing = false);
 
 
         if (Input.GetKey(KeyCode.LeftShift))
@@ -50,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (vInput == 0)
+        if (vInput == 0 && !isAimaing)
             return;
         rotation = cam.transform.localRotation;
         rotation.x = transform.localRotation.x;
