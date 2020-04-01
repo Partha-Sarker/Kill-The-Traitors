@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CopyTargetAttribute : MonoBehaviour
 {
-    public enum Attributes { YZPosition, YZPositionAndAllRotation};
+    public enum Attributes { YZPosition, YZPositionAndAllRotation, PositionAndRotation};
     public Attributes attribute = Attributes.YZPosition;
     public Transform target;
     public Vector3 position;
@@ -31,6 +31,11 @@ public class CopyTargetAttribute : MonoBehaviour
             position.x = transform.position.x;
             transform.position = position;
             transform.rotation = target.rotation;
+        }
+        if(attribute == Attributes.PositionAndRotation)
+        {
+            transform.position = target.transform.position;
+            transform.rotation = target.transform.rotation;
         }
     }
 }

@@ -4,28 +4,25 @@ using UnityEngine;
 
 public class Orbit : MonoBehaviour
 {
+    public enum TestMode { CopyLocalXRotation };
+    public TestMode mode = TestMode.CopyLocalXRotation;
     public Transform target;
-    public enum orbitAround {up, right, forward };
-    public orbitAround axis = orbitAround.right;
-    public float rotation;
-    private Transform camTransform;
 
-    private void Start()
+    // Start is called before the first frame update
+    void Start()
     {
-        camTransform = Camera.main.transform;
+
     }
 
+    // Update is called once per frame
     void Update()
     {
-        // Spin the object around the world origin at 20 degrees/second.
-        //rotation = camTransform.localRotation.x - transform.localRotation.x;
-
-        if(axis == orbitAround.up)
-            transform.RotateAround(target.position, Vector3.up, rotation);
-        else if(axis == orbitAround.right)
-            transform.RotateAround(target.position, Vector3.right, rotation);
-        else
-            transform.RotateAround(target.position, Vector3.forward, rotation);
+        if (mode == TestMode.CopyLocalXRotation)
+        {
+            //rotation = transform.localRotation;
+            //rotation.x = target.localRotation.x;
+            //transform.localRotation = rotation;
+            transform.localRotation = Quaternion.Euler(target.localRotation.eulerAngles.x, transform.localEulerAngles.y, transform.localEulerAngles.z);
+        }
     }
-
 }
