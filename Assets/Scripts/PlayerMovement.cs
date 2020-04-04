@@ -13,12 +13,16 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float animationTransitionTime = 1;
     [SerializeField] private float fovSwitchTime = .2f;
     [SerializeField] private float aimSwitchTime = .2f;
+    [SerializeField] private int aimRotationMultiplier = 20;
+    [SerializeField] private float aimRotationSmoothness = 10;
+
     [SerializeField] private Rig rightArmRig;
     [SerializeField] private Rig headRig;
     [SerializeField] private CinemachineFreeLook CMCam;
+    [SerializeField] private Gun gun;
 
 
-    private float hInput, vInput, multiplier = 1;
+    private float hInput, vInput, hMouse, vMouse, multiplier = 1;
     private Quaternion rotation;
     private bool isAimaing = false;
 
@@ -35,33 +39,36 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
+            rightArmRig.weight = 1;
             animator.SetBool("isAiming", isAimaing = true);
-            StartCoroutine(ChangeRigWeightSmoothly(0, 1));
-            StartCoroutine(ChangeFieldOfViewSmoothly(40, 20));
-            //LookAtTarget.isAiming = true;
+            gun.Aim();
+            //StartCoroutine(ChangeRigWeightSmoothly(0, 1));
+            //StartCoroutine(ChangeFieldOfViewSmoothly(40, 20));
         }
         else if (Input.GetMouseButtonUp(1))
         {
+            rightArmRig.weight = 0;
             animator.SetBool("isAiming", isAimaing = false);
-            StartCoroutine(ChangeRigWeightSmoothly(1, 0));
-            StartCoroutine(ChangeFieldOfViewSmoothly(20, 40));
-            //LookAtTarget.isAiming = false;
+            gun.Idle();
+            //StartCoroutine(ChangeRigWeightSmoothly(1, 0));
+            //StartCoroutine(ChangeFieldOfViewSmoothly(20, 40));
         }
 
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             multiplier = 2;
-            //StartCoroutine(ChangeMultiplierSmoothly(multiplier, 2));
         }
         else if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             multiplier = 1;
-            //StartCoroutine(ChangeMultiplierSmoothly(multiplier, 1));
         }
 
         hInput = Input.GetAxisRaw("Horizontal") * multiplier;
         vInput = Input.GetAxisRaw("Vertical") * multiplier;
+
+        hMouse = Input.GetAxisRaw("Mouse X") * aimRotationMultiplier;
+        vMouse = Input.GetAxisRaw("Mouse Y") * aimRotationMultiplier;
 
         animator.SetFloat("vInput", vInput, animationTransitionTime, Time.deltaTime);
         animator.SetFloat("hInput", hInput, animationTransitionTime, Time.deltaTime);
@@ -69,12 +76,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (vInput == 0 && !isAimaing)
+        //if (vInput == 0 && !isAimaing)
+        //    return;
+        if (!isAimaing)
             return;
-        rotation = cam.transform.localRotation;
-        rotation.x = transform.localRotation.x;
-        rotation.z = transform.localRotation.z;
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * playerRotationSmoothness);
+        rb.angularVelocity = Vector3.Lerp(rb.angularVelocity, Vector3.up * hMouse, Time.deltaTime * aimRotationSmoothness);
+        //rotation = cam.transform.localRotation;
+        //rotation.x = transform.localRotation.x;
+        //rotation.z = transform.localRotation.z;
+        //transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * playerRotationSmoothness);
     }
 
     IEnumerator ChangeRigWeightSmoothly(float source, float target)
