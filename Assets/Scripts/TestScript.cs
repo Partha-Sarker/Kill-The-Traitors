@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class TestScript : MonoBehaviour
 {
-    public enum TestMode {CopyLocalXRotation, DrawRay};
+    public enum TestMode {CopyLocalXRotation, DrawRay, RotateWithMouse};
     public TestMode mode = TestMode.CopyLocalXRotation;
     public Transform target;
     private Quaternion rotation;
+    public int rotationSpeed = 20;
 
     // Start is called before the first frame update
     void Start()
@@ -23,9 +24,13 @@ public class TestScript : MonoBehaviour
             rotation.x = target.localRotation.x;
             transform.localRotation = rotation;
         }
-        if (mode == TestMode.DrawRay)
+        else if (mode == TestMode.DrawRay)
         {
             Debug.DrawRay(transform.position, transform.forward * 100, Color.green);
+        }
+        else if(mode == TestMode.RotateWithMouse)
+        {
+            transform.Rotate(Vector3.right, rotationSpeed * Input.GetAxis("Mouse Y") * Time.deltaTime);
         }
     }
 }

@@ -4,7 +4,8 @@ using UnityEngine;
 
 public abstract class Gun : MonoBehaviour
 {
-    public Transform idleTransform, aimingTransform, rightHand, player;
+    public Transform idleTransform, aimingTransform, rightHand, player, gunHolder;
+    public Transform leftHandRigPos, rightHandRigPos, idleLeftHandRigPos, idleRightHandRigPos, aimingLeftHandRigPos, aimingRightHandRigPos;
     public float switchTime = .3f;
     public string name;
 
@@ -13,8 +14,9 @@ public abstract class Gun : MonoBehaviour
         transform.parent = player;
         transform.localPosition = aimingTransform.localPosition;
         transform.localRotation = aimingTransform.localRotation;
-        //StopAllCoroutines();
-        //StartCoroutine(AimSmoothly(transform, aimingTransform));
+        gunHolder.rotation = Quaternion.identity;
+        transform.parent = gunHolder;
+        gunHolder.localRotation = Quaternion.Euler(Camera.main.transform.eulerAngles.x, 0, 0);
     }
 
     public void Idle()
@@ -22,34 +24,5 @@ public abstract class Gun : MonoBehaviour
         transform.parent = rightHand;
         transform.localPosition = idleTransform.localPosition;
         transform.localRotation = idleTransform.localRotation;
-        //StopAllCoroutines();
-        //StartCoroutine(IdleSmoothly(transform, idleTransform));
     }
-
-    //IEnumerator AimSmoothly(Transform source, Transform target)
-    //{
-    //    float startTime = Time.time;
-    //    while (Time.time < startTime + switchTime)
-    //    {
-    //        transform.localPosition = Vector3.Lerp(source.localPosition, target.localPosition, (Time.time - startTime) / switchTime);
-    //        transform.localRotation = Quaternion.Lerp(source.localRotation, target.localRotation, (Time.time - startTime) / switchTime);
-    //        yield return null;
-    //    }
-    //    transform.localPosition = target.localPosition;
-    //    transform.localRotation = target.localRotation;
-    //}
-
-    //IEnumerator IdleSmoothly(Transform source, Transform target)
-    //{
-    //    transform.parent = rightHand;
-    //    float startTime = Time.time;
-    //    while (Time.time < startTime + switchTime)
-    //    {
-    //        transform.localPosition = Vector3.Lerp(source.localPosition, target.localPosition, (Time.time - startTime) / switchTime);
-    //        transform.localRotation = Quaternion.Lerp(source.localRotation, target.localRotation, (Time.time - startTime) / switchTime);
-    //        yield return null;
-    //    }
-    //    transform.localPosition = target.localPosition;
-    //    transform.localRotation = target.localRotation;
-    //}
 }

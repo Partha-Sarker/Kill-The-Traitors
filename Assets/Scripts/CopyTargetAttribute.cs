@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using DG.Tweening;
 using UnityEngine;
 
 public class CopyTargetAttribute : MonoBehaviour
@@ -17,7 +16,7 @@ public class CopyTargetAttribute : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         if(attribute == Attributes.YZPosition)
         {

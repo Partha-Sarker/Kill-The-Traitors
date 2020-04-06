@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class M416 : Gun
 {
-    
+    //public float switchTime = .3f;
 }
