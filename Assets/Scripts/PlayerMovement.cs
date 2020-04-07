@@ -8,19 +8,27 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;
     private Animator animator;
     private Camera cam;
+    [SerializeField] private CinemachineFreeLook tpsCam;
+
+    [SerializeField] private Transform orbit;
 
     [SerializeField] private float playerRotationSmoothness = 10;
+    [SerializeField] private float aimRotationMultiplier = 10;
+    [SerializeField] private float aimRotationSmoothness = 10;
     [SerializeField] private float animationTransitionTime = 1;
     [SerializeField] private float fovSwitchTime = .2f;
     [SerializeField] private float aimSwitchTime = .2f;
+    [SerializeField] private float upperAimLimit = -40;
+    [SerializeField] private float lowerAimLimit = 40;
+    [SerializeField] private float aimSwitchCamOffset = .6f;
     [SerializeField] private Rig rightArmRig;
     [SerializeField] private Rig headRig;
-    [SerializeField] private CinemachineFreeLook CMCam;
 
 
-    private float hInput, vInput, multiplier = 1;
+    private float hInput, vInput, multiplier = 1, hMouse, vMouse, tpsCamYValue, test1, test2;
     private Quaternion rotation;
-    private bool isAimaing = false;
+    private Vector3 eulerRotation;
+    [SerializeField] private bool isShooting = false;
 
     // Start is called before the first frame update
     void Start()
@@ -33,35 +41,58 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(0))
         {
-            animator.SetBool("isAiming", isAimaing = true);
-            StartCoroutine(ChangeRigWeightSmoothly(0, 1));
-            StartCoroutine(ChangeFieldOfViewSmoothly(40, 20));
-            //LookAtTarget.isAiming = true;
+            rotation = cam.transform.localRotation;
+            rotation.x = transform.localRotation.x;
+            rotation.z = transform.localRotation.z;
+            transform.rotation = rotation;
+
+
+            eulerRotation = orbit.localRotation.eulerAngles;
+            eulerRotation.x = cam.transform.localRotation.eulerAngles.x;
+            orbit.transform.localEulerAngles = eulerRotation;
+
+
+            animator.SetBool("isAiming", isShooting = true);
+            StartCoroutine(ChangeRigWeightSmoothly(rightArmRig.weight, 1));
         }
-        else if (Input.GetMouseButtonUp(1))
+
+        else if (Input.GetMouseButtonUp(0))
         {
-            animator.SetBool("isAiming", isAimaing = false);
-            StartCoroutine(ChangeRigWeightSmoothly(1, 0));
-            StartCoroutine(ChangeFieldOfViewSmoothly(20, 40));
-            //LookAtTarget.isAiming = false;
+            tpsCamYValue = orbit.localEulerAngles.x;
+            if (tpsCamYValue > 180)
+                tpsCamYValue -= 360;
+
+
+            test1 = Mathf.Abs(lowerAimLimit) + Mathf.Abs(upperAimLimit);
+            test2 = tpsCamYValue + Mathf.Abs(upperAimLimit);
+            tpsCamYValue = Mathf.Clamp(test2, 0, test1);
+            tpsCamYValue /= test1;
+            //print(tpsCamYValue);
+
+            tpsCam.m_XAxis.Value = transform.localRotation.eulerAngles.y;
+            tpsCam.m_YAxis.Value = tpsCamYValue * aimSwitchCamOffset;
+
+            animator.SetBool("isAiming", isShooting = false);
+            StartCoroutine(ChangeRigWeightSmoothly(rightArmRig.weight, 0));
         }
 
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             multiplier = 2;
-            //StartCoroutine(ChangeMultiplierSmoothly(multiplier, 2));
         }
         else if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             multiplier = 1;
-            //StartCoroutine(ChangeMultiplierSmoothly(multiplier, 1));
         }
 
         hInput = Input.GetAxisRaw("Horizontal") * multiplier;
         vInput = Input.GetAxisRaw("Vertical") * multiplier;
+
+        hMouse = Mathf.Lerp(hMouse, Input.GetAxisRaw("Mouse X"), aimRotationSmoothness * Time.deltaTime);
+        vMouse = Mathf.Lerp(vMouse, Input.GetAxisRaw("Mouse Y"), aimRotationSmoothness * Time.deltaTime);
 
         animator.SetFloat("vInput", vInput, animationTransitionTime, Time.deltaTime);
         animator.SetFloat("hInput", hInput, animationTransitionTime, Time.deltaTime);
@@ -69,12 +100,29 @@ public class PlayerMovement : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (vInput == 0 && !isAimaing)
+        if (isShooting)
+        {
+            transform.Rotate(Vector3.up, hMouse * aimRotationMultiplier);
+
+            eulerRotation = orbit.localEulerAngles;
+            if (eulerRotation.x > 180)
+                eulerRotation.x -= 360;
+
+            if (eulerRotation.x < upperAimLimit && vMouse > 0)
+                return;
+            if (eulerRotation.x > lowerAimLimit && vMouse < 0)
+                return;
+
+            orbit.Rotate(-Vector3.right, vMouse * aimRotationMultiplier);
             return;
-        rotation = cam.transform.localRotation;
-        rotation.x = transform.localRotation.x;
-        rotation.z = transform.localRotation.z;
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * playerRotationSmoothness);
+        }
+        if(vInput != 0)
+        {
+            rotation = cam.transform.localRotation;
+            rotation.x = transform.localRotation.x;
+            rotation.z = transform.localRotation.z;
+            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * playerRotationSmoothness);
+        }
     }
 
     IEnumerator ChangeRigWeightSmoothly(float source, float target)
@@ -90,16 +138,16 @@ public class PlayerMovement : MonoBehaviour
         headRig.weight = target;
     }
 
-    IEnumerator ChangeFieldOfViewSmoothly(float source, float target)
-    {
-        float startTime = Time.time;
-        while (Time.time < startTime + fovSwitchTime)
-        {
-            CMCam.m_Lens.FieldOfView = Mathf.Lerp(source, target, (Time.time - startTime) / fovSwitchTime);
-            yield return null;
-        }
-        CMCam.m_Lens.FieldOfView = target;
-    }
+    //IEnumerator ChangeFieldOfViewSmoothly(float source, float target)
+    //{
+    //    float startTime = Time.time;
+    //    while (Time.time < startTime + fovSwitchTime)
+    //    {
+    //        CMCam.m_Lens.FieldOfView = Mathf.Lerp(source, target, (Time.time - startTime) / fovSwitchTime);
+    //        yield return null;
+    //    }
+    //    CMCam.m_Lens.FieldOfView = target;
+    //}
 
     //IEnumerator ChangeMultiplierSmoothly(float source, float target)
     //{
