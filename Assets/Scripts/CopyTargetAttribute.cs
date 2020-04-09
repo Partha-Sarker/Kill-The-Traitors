@@ -17,7 +17,7 @@ public class CopyTargetAttribute : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         if(attribute == Attributes.YZPosition)
         {

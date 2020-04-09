@@ -13,17 +13,20 @@ public class TPSCamController : MonoBehaviour
     [SerializeField] private int mouseYSpeedMod = 5;
     [SerializeField] private float distance = 3f;
     [SerializeField] private float fovSwitchTime = .2f;
+    [SerializeField] private float aimSwitchTime = .2f;
 
     [SerializeField] private Animator animator;
 
     private CinemachineVirtualCamera tpsCam;
+    private Vector3 position;
+    private Quaternion rotation;
 
     [SerializeField] private Rig rightArmRig;
     [SerializeField] private Rig headRig;
 
     private float x = 0.0f;
     private float y = 0.0f;
-    private bool isShooting = false;
+    private bool isShooting = false, isAiming = false;
 
     // Use this for initialization
     void Start()
@@ -38,18 +41,55 @@ public class TPSCamController : MonoBehaviour
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
-        { 
-            animator.SetBool("isAiming", isShooting = true);
-            rightArmRig.weight = 1;
-            headRig.weight = 1;
+        {
+            isShooting = true;
+            if (!isAiming)
+            {
+                animator.SetBool("isAiming", true);
+                StartCoroutine(ChangeRigWeightSmoothly(rightArmRig.weight, 1));
+                //rightArmRig.weight = 1;
+                //headRig.weight = 1;
+            }
         }
 
         else if (Input.GetMouseButtonUp(0))
         {
-            animator.SetBool("isAiming", isShooting = false);
-            rightArmRig.weight = 0;
-            headRig.weight = 0;
+            isShooting = false;
+            if (!isAiming)
+            {
+                animator.SetBool("isAiming", isShooting = false);
+                StartCoroutine(ChangeRigWeightSmoothly(rightArmRig.weight, 0));
+                //rightArmRig.weight = 0;
+                //headRig.weight = 0;
+            }
         }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            isAiming = true;
+            if (!isShooting)
+            {
+                animator.SetBool("isAiming", true);
+                StartCoroutine(ChangeRigWeightSmoothly(rightArmRig.weight, 1));
+                //rightArmRig.weight = 1;
+                //headRig.weight = 1;
+            }
+            StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 20));
+        }
+
+        else if (Input.GetMouseButtonUp(1))
+        {
+            isAiming = false;
+            if (!isShooting)
+            {
+                animator.SetBool("isAiming", isShooting = false);
+                StartCoroutine(ChangeRigWeightSmoothly(rightArmRig.weight, 0));
+                //rightArmRig.weight = 0;
+                //headRig.weight = 0;
+            }
+            StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 40));
+        }
+
     }
 
     void LateUpdate()
@@ -58,12 +98,12 @@ public class TPSCamController : MonoBehaviour
         y += Input.GetAxis("Mouse Y") * mouseYSpeedMod * -1;
         y = ClampAngle(y, -30, 30);
 
-        Quaternion rotation = Quaternion.Euler(y, x, 0);
-        Vector3 position = CameraTarget.position - (rotation * Vector3.forward * distance);
+        rotation = Quaternion.Euler(y, x, 0);
+        position = CameraTarget.position - (rotation * Vector3.forward * distance);
 
         transform.rotation = rotation;
         transform.position = position;
-        if (isShooting)
+        if (isShooting || isAiming)
         {
             player.rotation = Quaternion.Euler(player.eulerAngles.x, x, player.eulerAngles.z);
             orbit.localRotation = Quaternion.Euler(y, 0, 0);
@@ -92,5 +132,18 @@ public class TPSCamController : MonoBehaviour
             yield return null;
         }
         tpsCam.m_Lens.FieldOfView = target;
+    }
+
+    IEnumerator ChangeRigWeightSmoothly(float source, float target)
+    {
+        float startTime = Time.time;
+        while (Time.time < startTime + aimSwitchTime)
+        {
+            rightArmRig.weight = Mathf.Lerp(source, target, (Time.time - startTime) / aimSwitchTime);
+            headRig.weight = rightArmRig.weight;
+            yield return null;
+        }
+        rightArmRig.weight = target;
+        headRig.weight = target;
     }
 }
