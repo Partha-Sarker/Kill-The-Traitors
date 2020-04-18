@@ -3,7 +3,15 @@ guid: a51f1dd50b0c7cb488493d538a3fdce7
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - animator: {instanceID: 0}
+  - tpsCam: {instanceID: 0}
+  - muzzleFlash: {instanceID: 0}
+  - hitImpact: {fileID: 9181891752319078665, guid: a4166545416780b4a97d184ec2f9d086,
+      type: 3}
+  - orbit: {instanceID: 0}
+  - rightArmRig: {instanceID: 0}
+  - headRig: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

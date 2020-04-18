@@ -9,11 +9,13 @@ public class GunAuto : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private CinemachineVirtualCamera tpsCam;
     [SerializeField] private ParticleSystem muzzleFlash;
+    [SerializeField] private GameObject hitImpact;
     [SerializeField] private Transform orbit;
     [SerializeField] private Rig rightArmRig;
     [SerializeField] private Rig headRig;
 
     private Camera mainCam;
+    private GameObject tempHitImpact;
 
     [SerializeField] private float fovSwitchTime = .2f;
     [SerializeField] private float rightArmRigSwitchTime = .1f, headRigSwitchTime = .2f;
@@ -101,6 +103,8 @@ public class GunAuto : MonoBehaviour
         if(Physics.Raycast(mainCam.transform.position, mainCam.transform.forward, out RaycastHit hit, maxDistance))
         {
             print(hit.transform.name);
+            tempHitImpact = Instantiate(hitImpact, hit.point, Quaternion.LookRotation(hit.normal));
+            Destroy(tempHitImpact, 3);
         }
 
     }
