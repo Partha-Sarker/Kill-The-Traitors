@@ -8,6 +8,7 @@ public class TPSCamController : MonoBehaviour
     [SerializeField] private Transform CameraTarget;
     [SerializeField] private Transform player;
     [SerializeField] private Transform orbit;
+    [SerializeField] private GunAuto gun;
 
     [SerializeField] private int mouseXSpeedMod = 5;
     [SerializeField] private int mouseYSpeedMod = 5;
@@ -26,7 +27,8 @@ public class TPSCamController : MonoBehaviour
 
     private float x = 0.0f;
     private float y = 0.0f;
-    private bool isShooting = false, isAiming = false;
+    //private bool isShooting = false, isAiming = false;
+    private bool isAiming = false;
 
     // Use this for initialization
     void Start()
@@ -42,54 +44,26 @@ public class TPSCamController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            isShooting = true;
-            if (!isAiming)
-            {
-                animator.SetBool("isAiming", true);
-                StartCoroutine(ChangeRigWeightSmoothly(rightArmRig.weight, 1));
-                //rightArmRig.weight = 1;
-                //headRig.weight = 1;
-            }
+            isAiming = gun.StartFiring();
         }
-
+        else if (Input.GetMouseButton(0))
+        {
+            gun.Shoot();
+        }
         else if (Input.GetMouseButtonUp(0))
         {
-            isShooting = false;
-            if (!isAiming)
-            {
-                animator.SetBool("isAiming", isShooting = false);
-                StartCoroutine(ChangeRigWeightSmoothly(rightArmRig.weight, 0));
-                //rightArmRig.weight = 0;
-                //headRig.weight = 0;
-            }
+            isAiming = gun.StopFiring();
         }
 
         if (Input.GetMouseButtonDown(1))
         {
-            isAiming = true;
-            if (!isShooting)
-            {
-                animator.SetBool("isAiming", true);
-                StartCoroutine(ChangeRigWeightSmoothly(rightArmRig.weight, 1));
-                //rightArmRig.weight = 1;
-                //headRig.weight = 1;
-            }
-            StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 20));
+            isAiming = gun.StartAiming();
         }
 
         else if (Input.GetMouseButtonUp(1))
         {
-            isAiming = false;
-            if (!isShooting)
-            {
-                animator.SetBool("isAiming", isShooting = false);
-                StartCoroutine(ChangeRigWeightSmoothly(rightArmRig.weight, 0));
-                //rightArmRig.weight = 0;
-                //headRig.weight = 0;
-            }
-            StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 40));
+            isAiming = gun.StopAiming();
         }
-
     }
 
     void LateUpdate()
@@ -103,7 +77,14 @@ public class TPSCamController : MonoBehaviour
 
         transform.rotation = rotation;
         transform.position = position;
-        if (isShooting || isAiming)
+
+        //if (isShooting || isAiming)
+        //{
+        //    player.rotation = Quaternion.Euler(player.eulerAngles.x, x, player.eulerAngles.z);
+        //    orbit.localRotation = Quaternion.Euler(y, 0, 0);
+        //}
+
+        if (isAiming)
         {
             player.rotation = Quaternion.Euler(player.eulerAngles.x, x, player.eulerAngles.z);
             orbit.localRotation = Quaternion.Euler(y, 0, 0);
