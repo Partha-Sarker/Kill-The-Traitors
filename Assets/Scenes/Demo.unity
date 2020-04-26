@@ -287,6 +287,8 @@ MonoBehaviour:
   player: {fileID: 5006512735351476947}
   orbit: {fileID: 43961721}
   gun: {fileID: 471970937}
+  gunObject: {fileID: 471970936}
+  rigBuilder: {fileID: 8296172668639436994}
   mouseXSpeedMod: 5
   mouseYSpeedMod: 5
   distance: 4

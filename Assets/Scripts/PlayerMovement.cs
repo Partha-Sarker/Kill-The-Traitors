@@ -42,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (vInput != 0)
+        if (vInput != 0 || hInput !=0)
         {
             rotation = cam.transform.rotation;
             rotation.x = transform.rotation.x;

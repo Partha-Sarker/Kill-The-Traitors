@@ -38,6 +38,7 @@ public class GunAuto : MonoBehaviour
             StopAllCoroutines();
             nextTimeToFire = Time.time + fireStartDelay;
             animator.SetBool("isAiming", true);
+            animator.SetBool("isStrafing", true);
             StartCoroutine(ChangeRightArmRigWeightSmoothly(rightArmRig.weight, 1));
             StartCoroutine(ChangeHeadRigWeightSmoothly(rightArmRig.weight, 1));
             StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 30));
@@ -54,6 +55,7 @@ public class GunAuto : MonoBehaviour
         if (!isAiming)
         {
             animator.SetBool("isAiming", isShooting = false);
+            animator.SetBool("isStrafing", false);
             StartCoroutine(ChangeRightArmRigWeightSmoothly(rightArmRig.weight, 0));
             StartCoroutine(ChangeHeadRigWeightSmoothly(rightArmRig.weight, 0));
             StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 40));
@@ -69,6 +71,7 @@ public class GunAuto : MonoBehaviour
         if (!isShooting)
         {
             animator.SetBool("isAiming", true);
+            animator.SetBool("isStrafing", true);
             StartCoroutine(ChangeRightArmRigWeightSmoothly(rightArmRig.weight, 1));
             StartCoroutine(ChangeHeadRigWeightSmoothly(rightArmRig.weight, 1));
         }
@@ -83,6 +86,7 @@ public class GunAuto : MonoBehaviour
         if (!isShooting)
         {
             animator.SetBool("isAiming", isShooting = false);
+            animator.SetBool("isStrafing", false);
             StartCoroutine(ChangeRightArmRigWeightSmoothly(rightArmRig.weight, 0));
             StartCoroutine(ChangeHeadRigWeightSmoothly(rightArmRig.weight, 0));
             StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 40));
@@ -102,7 +106,7 @@ public class GunAuto : MonoBehaviour
         nextTimeToFire = Time.time + 1 / fireRate;
         if(Physics.Raycast(mainCam.transform.position, mainCam.transform.forward, out RaycastHit hit, maxDistance))
         {
-            print(hit.transform.name);
+            //print(hit.transform.name);
             tempHitImpact = Instantiate(hitImpact, hit.point, Quaternion.LookRotation(hit.normal));
             Destroy(tempHitImpact, 3);
         }

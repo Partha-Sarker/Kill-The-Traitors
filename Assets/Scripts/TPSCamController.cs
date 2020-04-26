@@ -9,6 +9,8 @@ public class TPSCamController : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private Transform orbit;
     [SerializeField] private GunAuto gun;
+    [SerializeField] private GameObject gunObject;
+    [SerializeField] private RigBuilder rigBuilder;
 
     [SerializeField] private int mouseXSpeedMod = 5;
     [SerializeField] private int mouseYSpeedMod = 5;
@@ -17,6 +19,9 @@ public class TPSCamController : MonoBehaviour
     [SerializeField] private float aimSwitchTime = .2f;
 
     [SerializeField] private Animator animator;
+
+    private enum WeaponType { gun, grenade };
+    private WeaponType currentWeapon = WeaponType.gun;
 
     private CinemachineVirtualCamera tpsCam;
     private Vector3 position;
@@ -42,28 +47,68 @@ public class TPSCamController : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if(Input.GetAxis("Mouse ScrollWheel") != 0)
         {
-            isAiming = gun.StartFiring();
-        }
-        else if (Input.GetMouseButton(0))
-        {
-            gun.Shoot();
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            isAiming = gun.StopFiring();
+            if (currentWeapon == WeaponType.gun)
+            {
+                currentWeapon = WeaponType.grenade;
+                animator.SetTrigger("switchWeapon");
+                animator.SetBool("isStrafing", true);
+                gunObject.SetActive(false);
+                rigBuilder.layers[0].active = false;
+                rigBuilder.layers[1].active = false;
+                rigBuilder.layers[2].active = false;
+            }
+            else
+            {
+                currentWeapon = WeaponType.gun;
+                animator.SetTrigger("switchWeapon");
+                animator.SetBool("isStrafing", false);
+                gunObject.SetActive(true);
+                rigBuilder.layers[0].active = true;
+                rigBuilder.layers[1].active = true;
+                rigBuilder.layers[2].active = true;
+            }
         }
 
-        if (Input.GetMouseButtonDown(1))
+        if(currentWeapon == WeaponType.grenade)
         {
-            isAiming = gun.StartAiming();
+            if (Input.GetMouseButtonDown(0))
+            {
+                animator.SetTrigger("throwing");
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                animator.SetTrigger("throw");
+            }
         }
 
-        else if (Input.GetMouseButtonUp(1))
+        else
         {
-            isAiming = gun.StopAiming();
+            if (Input.GetMouseButtonDown(0))
+            {
+                isAiming = gun.StartFiring();
+            }
+            else if (Input.GetMouseButton(0))
+            {
+                gun.Shoot();
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                isAiming = gun.StopFiring();
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                isAiming = gun.StartAiming();
+            }
+
+            else if (Input.GetMouseButtonUp(1))
+            {
+                isAiming = gun.StopAiming();
+            }
         }
+
     }
 
     void LateUpdate()
