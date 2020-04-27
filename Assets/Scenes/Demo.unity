@@ -1832,6 +1832,36 @@ MonoBehaviour:
     m_MaintainTargetRotationOffset: 0
   m_SourceObjectsGUIToggle: 1
   m_SettingsGUIToggle: 0
+--- !u!1 &1312642590
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1312642591}
+  m_Layer: 0
+  m_Name: throwing point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1312642591
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312642590}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.157, y: 1.7002, z: 0.592}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5006512735351476947}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1323765176
 GameObject:
   m_ObjectHideFlags: 0
@@ -4036,6 +4066,7 @@ Transform:
   - {fileID: 1202489126}
   - {fileID: 1535346494}
   - {fileID: 665146376}
+  - {fileID: 1312642591}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4936,6 +4967,7 @@ GameObject:
   - component: {fileID: 2135921771}
   - component: {fileID: 8296172668639436994}
   - component: {fileID: 8296172668639436993}
+  - component: {fileID: 8296172668639436995}
   m_Layer: 0
   m_Name: Main Character
   m_TagString: Player
@@ -4971,12 +5003,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_RigLayers:
   - rig: {fileID: 1927830850}
-    active: 1
+    active: 0
   - rig: {fileID: 1202489127}
-    active: 1
+    active: 0
   - rig: {fileID: 1535346495}
-    active: 1
+    active: 0
   m_Effectors: []
+--- !u!114 &8296172668639436995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8296172668639436992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcb05681fa1c9564ba25e462dfccf736, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 2135921771}
+  grenade: {fileID: 1009415557198524012, guid: 2c5343e0dd56a4d4ab93a71dd1cd200e, type: 3}
+  throwingPosition: {fileID: 1312642591}
+  throwingOffset: {x: 0, y: 5, z: 0}
+  force: 30
 --- !u!1 &8389181126411970715
 GameObject:
   m_ObjectHideFlags: 0

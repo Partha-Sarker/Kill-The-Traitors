@@ -19,9 +19,9 @@ public class ThrowableManager : MonoBehaviour
     public void Throw()
     {
         animator.SetTrigger("throw");
-        FindObjectOfType<AnimationManager>().OnTossGrenadeEnter();
-        //GameObject tempGrenade = Instantiate(grenade, throwingPosition.position, throwingPosition.rotation);
-        //print(cam.forward * force);
-        //tempGrenade.GetComponent<Rigidbody>().AddForce(cam.forward * force + throwingOffset, ForceMode.VelocityChange);
+        //FindObjectOfType<AnimationManager>().OnTossGrenadeEnter();
+        GameObject tempGrenade = Instantiate(grenade, throwingPosition.position, throwingPosition.rotation);
+        tempGrenade.GetComponent<Rigidbody>().AddForce(cam.forward * force + throwingOffset, ForceMode.VelocityChange);
+        Destroy(tempGrenade, 4);
     }
 }
