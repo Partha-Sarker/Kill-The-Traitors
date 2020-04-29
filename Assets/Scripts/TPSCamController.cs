@@ -2,6 +2,7 @@
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using DG.Tweening;
 
 public class TPSCamController : MonoBehaviour
 {
@@ -75,6 +76,9 @@ public class TPSCamController : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
+                Vector3 rotation = player.eulerAngles;
+                rotation.y = transform.eulerAngles.y;
+                player.DORotate(rotation, .3f);
                 animator.SetTrigger("throwing");
             }
             else if (Input.GetMouseButtonUp(0))

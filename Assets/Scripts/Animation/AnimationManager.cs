@@ -5,37 +5,29 @@ using UnityEngine.Animations.Rigging;
 
 public class AnimationManager : MonoBehaviour
 {
-    [SerializeField] private Rig rightArmRig;
-    [SerializeField] private Rig leftArmRig;
-    [SerializeField] private Rig headRig;
+    private Animator animator;
+    [SerializeField] private float layerWeightSwitchTime = .2f;
 
-    private void Update()
+    private void Start()
     {
-        if (Input.GetMouseButtonDown(1))
-            OnRifleUpEnter();
+        animator = GetComponent<Animator>();
     }
 
-    public void OnRifleDownEnter()
+    public void SetLayerWeight(int index, float target)
     {
-        rightArmRig.weight = 0;
-        leftArmRig.weight = 1;
-        headRig.weight = 0;
-        print("Rifle going down");
+        StartCoroutine(ChangeAnimatorLayerWeight(index, animator.GetLayerWeight(index), target));
     }
 
-    public void OnRifleUpEnter()
+    IEnumerator ChangeAnimatorLayerWeight(int index, float source, float target)
     {
-        rightArmRig.weight = 1;
-        leftArmRig.weight = 1;
-        headRig.weight = 1;
-        print("Rifle going up");
-    }
-
-    public void OnTossGrenadeEnter()
-    {
-        rightArmRig.weight = 0;
-        leftArmRig.weight = 0;
-        headRig.weight = 0;
-        print("tossing grenade");
+        float startTime = Time.time;
+        float weight;
+        while (Time.time < startTime + layerWeightSwitchTime)
+        {
+            weight = Mathf.Lerp(source, target, (Time.time - startTime) / layerWeightSwitchTime);
+            animator.SetLayerWeight(index, weight);
+            yield return null;
+        }
+        animator.SetLayerWeight(index, target);
     }
 }
