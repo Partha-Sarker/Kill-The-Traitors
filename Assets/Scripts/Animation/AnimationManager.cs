@@ -7,6 +7,7 @@ public class AnimationManager : MonoBehaviour
 {
     private Animator animator;
     [SerializeField] private float layerWeightSwitchTime = .2f;
+    [SerializeField] private Throwable throwable;
 
     private void Start()
     {
@@ -29,5 +30,10 @@ public class AnimationManager : MonoBehaviour
             yield return null;
         }
         animator.SetLayerWeight(index, target);
+    }
+
+    public void ThrowGrenade()
+    {
+        throwable.Throw();
     }
 }
