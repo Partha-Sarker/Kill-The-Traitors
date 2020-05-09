@@ -285,8 +285,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponManager: {fileID: 2123071750}
   CameraTarget: {fileID: 665146376}
-  mouseXSpeedMod: 5
-  mouseYSpeedMod: 5
+  initialMouseSensitivity: 5
+  currentMouseSensitivity: 0
   camClampAngle: 40
   distance: 4
 --- !u!114 &151656209
@@ -1124,6 +1124,170 @@ Transform:
   m_Father: {fileID: 244740268}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &759021476
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 6003052536230499760}
+    m_Modifications:
+    - target: {fileID: 5888688498033724756, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: m_Name
+      value: sniper gun
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033724756, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033724757, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 2135921771}
+    - target: {fileID: 5888688498033724757, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: tpsCam
+      value: 
+      objectReference: {fileID: 151656209}
+    - target: {fileID: 5888688498033724757, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: orbit
+      value: 
+      objectReference: {fileID: 43961721}
+    - target: {fileID: 5888688498033724757, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: rightArmRig
+      value: 
+      objectReference: {fileID: 1927830850}
+    - target: {fileID: 5888688498033724757, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: headRig
+      value: 
+      objectReference: {fileID: 1535346495}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: tpsCam
+      value: 
+      objectReference: {fileID: 151656209}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 2135921771}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: mainCam
+      value: 
+      objectReference: {fileID: 1994313330}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 5006512735351476947}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: orbit
+      value: 
+      objectReference: {fileID: 43961721}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: rigBuilder
+      value: 
+      objectReference: {fileID: 8296172668639436994}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: rightArmRig
+      value: 
+      objectReference: {fileID: 1927830850}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: headRig
+      value: 
+      objectReference: {fileID: 1535346495}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: fireRate
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: aimFOV
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: shootMouseSensitivity
+      value: 4.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: aimMouseSensitivity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033889652, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.010618397
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033889652, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.22548907
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033889652, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.05010498
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033889652, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.4216828
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033889652, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.5397572
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033889652, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.37269476
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033889652, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.62605476
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033889652, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033889652, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033889652, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033889652, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c, type: 3}
 --- !u!1 &851326818
 GameObject:
   m_ObjectHideFlags: 0
@@ -1686,6 +1850,9 @@ MonoBehaviour:
   animator: {fileID: 2135921771}
   rigBuilder: {fileID: 8296172668639436994}
   mainCam: {fileID: 0}
+  camController: {fileID: 0}
+  defaultFOV: 0
+  defaultMouseSensitivity: 0
   activeStatus: 0
   throwingObject: {fileID: 1009415557198524012, guid: 2c5343e0dd56a4d4ab93a71dd1cd200e,
     type: 3}
@@ -1697,6 +1864,7 @@ MonoBehaviour:
   throwingOffset: {x: 0, y: 5, z: 0}
   force: 30
   randomRotation: 50
+  fovSwitchTime: 0.2
 --- !u!4 &1336385987
 Transform:
   m_ObjectHideFlags: 0
@@ -1804,6 +1972,24 @@ Transform:
   m_Father: {fileID: 244740268}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1491279774 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5888688498033889652, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+    type: 3}
+  m_PrefabInstance: {fileID: 759021476}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1491279775 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+    type: 3}
+  m_PrefabInstance: {fileID: 759021476}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e503b2985f0afa4f826949d9dbc984e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1535346493
 GameObject:
   m_ObjectHideFlags: 0
@@ -2536,10 +2722,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07269b10c11554549a424891853f22ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentWeapon: {fileID: 1336385986}
+  currentWeapon: {fileID: 0}
   allWeapon:
   - {fileID: 471970938}
   - {fileID: 1336385986}
+  - {fileID: 1491279775}
 --- !u!4 &2123071751
 Transform:
   m_ObjectHideFlags: 0
@@ -2677,12 +2864,7 @@ Animator:
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
-  m_WarningMessage: "\nBinding warning: Some generic clip(s) animate transforms that
-    are already bound by a Humanoid avatar. These transforms can only be changed
-    by Humanoid clips.\n\tTransform 'mixamorig:RightArm'\n\tTransform 'mixamorig:Head'\n\tTransform
-    'mixamorig:LeftArm'\n\tTransform 'mixamorig:RightHand'\n\tTransform 'mixamorig:LeftForeArm'\n\tTransform
-    'mixamorig:Spine2'\n\tTransform 'mixamorig:RightForeArm'\n\tTransform 'mixamorig:Neck'\n\tTransform
-    'mixamorig:LeftHand'\n\tTransform 'mixamorig:RightArm'\n\tand more ..."
+  m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
@@ -4083,7 +4265,7 @@ PrefabInstance:
     - target: {fileID: 5888688498033724756, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
         type: 3}
       propertyPath: m_Name
-      value: gun
+      value: m416 gun
       objectReference: {fileID: 0}
     - target: {fileID: 5888688498033724756, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
         type: 3}
@@ -4155,6 +4337,16 @@ PrefabInstance:
       propertyPath: headRig
       value: 
       objectReference: {fileID: 1535346495}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: aimMouseSensitivity
+      value: 3.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888688498033724758, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
+        type: 3}
+      propertyPath: shootMouseSensitivity
+      value: 4.1
+      objectReference: {fileID: 0}
     - target: {fileID: 5888688498033889652, guid: e945627eb4e3b2a4aba9cafb5dcf3e0c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4246,6 +4438,7 @@ Transform:
   - {fileID: 8759376518629627533}
   - {fileID: 3373197664298890867}
   - {fileID: 379536356}
+  - {fileID: 1491279774}
   m_Father: {fileID: 7402050281488146988}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4948,6 +5141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   layerWeightSwitchTime: 0.2
+  throwable: {fileID: 1336385986}
 --- !u!1 &8389181126411970715
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,13 +2,16 @@
 
 public class WeaponManager : MonoBehaviour
 {
-    public IWeapon currentWeapon;
+    [HideInInspector] public IWeapon currentWeapon;
     public IWeapon[] allWeapon;
+    private int currentWeaponIndex;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        currentWeaponIndex = 0;
+        currentWeapon = allWeapon[currentWeaponIndex];
         currentWeapon.Equip();
     }
 
@@ -17,6 +20,11 @@ public class WeaponManager : MonoBehaviour
     {
         if (currentWeapon == null)
             return;
+
+        if (Input.GetAxis("Mouse ScrollWheel") != 0)
+        {
+            SwitchWeapon();
+        }
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -40,5 +48,20 @@ public class WeaponManager : MonoBehaviour
         {
             currentWeapon.OnRightClickUp();
         }
+    }
+
+    public void SwitchWeapon(int index)
+    {
+
+    }
+
+    public void SwitchWeapon()
+    {
+        currentWeapon.Discard();
+        currentWeaponIndex++;
+        if (currentWeaponIndex >= allWeapon.Length)
+            currentWeaponIndex = 0;
+        currentWeapon = allWeapon[currentWeaponIndex];
+        currentWeapon.Equip();
     }
 }

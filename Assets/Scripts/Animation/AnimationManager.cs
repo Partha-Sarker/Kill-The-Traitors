@@ -1,13 +1,11 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 
 public class AnimationManager : MonoBehaviour
 {
     private Animator animator;
     [SerializeField] private float layerWeightSwitchTime = .2f;
-    [SerializeField] private Throwable throwable;
+    [SerializeField] private ThrowableWeapon throwable;
 
     private void Start()
     {

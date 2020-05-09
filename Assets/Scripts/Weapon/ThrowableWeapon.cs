@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using System.Collections;
 
-public class Throwable : IWeapon
+public class ThrowableWeapon : IWeapon
 {
     [SerializeField] private GameObject throwingObject;
     private GameObject tempThrowingObject;
@@ -10,7 +11,7 @@ public class Throwable : IWeapon
 
     [SerializeField] private Vector3 throwingOffset;
     [SerializeField] private int force, randomRotation;
-
+    [SerializeField] private float fovSwitchTime = .2f;
 
     public override void OnCamPosRotChanged(Vector3 position, Quaternion rotation)
     {
@@ -20,13 +21,16 @@ public class Throwable : IWeapon
     public override void Discard()
     {
         animator.SetBool("isStrafing", false);
-        tpsCam.m_Lens.FieldOfView = 40;
+        StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 40));
+        if (tempThrowingObject != null)
+            Destroy(tempThrowingObject);
         ResetThrowable();
     }
 
     public override void Equip()
     {
         animator.SetTrigger("switchToGrenade");
+        StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, fov));
         tpsCam.m_Lens.FieldOfView = fov;
         animator.SetBool("isStrafing", true);
         ResetThrowable();
@@ -54,7 +58,6 @@ public class Throwable : IWeapon
 
     public void Throw()
     {
-        print("throwing");
         if(activeStatus && tempThrowingObject != null)
         {
             tempThrowingObject.GetComponent<IThrowable>().StartThrowingPreparation();
@@ -100,5 +103,16 @@ public class Throwable : IWeapon
     public override void OnRightClickUp()
     {
         return;
+    }
+
+    IEnumerator ChangeFieldOfViewSmoothly(float source, float target)
+    {
+        float startTime = Time.time;
+        while (Time.time < startTime + fovSwitchTime)
+        {
+            tpsCam.m_Lens.FieldOfView = Mathf.Lerp(source, target, (Time.time - startTime) / fovSwitchTime);
+            yield return null;
+        }
+        tpsCam.m_Lens.FieldOfView = target;
     }
 }

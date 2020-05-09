@@ -18,7 +18,8 @@ public class Gun : IWeapon
 
     private GameObject tempHitImpact;
 
-    [SerializeField] private float fovSwitchTime = .2f;
+    [SerializeField] private float shootMouseSensitivity = 4, aimMouseSensitivity = 3;
+    [SerializeField] private float fovSwitchTime = .2f, shootFOV = 30, aimFOV = 20;
     [SerializeField] private float rightArmRigSwitchTime = .1f, headRigSwitchTime = .2f;
     [SerializeField] private float fireRate, damage, force, fireStartDelay = 0, maxDistance = 100, pushBackAmount, pushBackTime;
 
@@ -31,6 +32,10 @@ public class Gun : IWeapon
         this.gameObject.SetActive(true);
         rigBuilder.enabled = true;
         animator.SetTrigger("switchToRifle");
+        nextTimeToFire = Time.time;
+        StartCoroutine(ChangeFOVandSentivitySmoothly(
+            tpsCam.m_Lens.FieldOfView, defaultFOV, 
+            camController.GetCurrentMouseSensitivity(), camController.GetDefaultMouseSensitivity() ));
         //rigBuilder.layers[0].active = true;
         //rigBuilder.layers[1].active = true;
         //rigBuilder.layers[2].active = true;
@@ -41,6 +46,7 @@ public class Gun : IWeapon
     {
         this.gameObject.SetActive(false);
         rigBuilder.enabled = false;
+        //StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 40));
         //rigBuilder.layers[0].active = false;
         //rigBuilder.layers[1].active = false;
         //rigBuilder.layers[2].active = false;
@@ -49,11 +55,13 @@ public class Gun : IWeapon
 
     private void ResetGun()
     {
+        rightArmRig.weight = 0;
+        headRig.weight = 0;
         activeStatus = false;
         isShooting = false;
         isAiming = false;
+        animator.SetBool("isAiming", false);
         animator.SetBool("isStrafing", false);
-        tpsCam.m_Lens.FieldOfView = 40;
     }
 
     public override void OnLeftClickDown()
@@ -64,6 +72,8 @@ public class Gun : IWeapon
 
     public override void OnLeftClickHold()
     {
+        if (mode == GunMode.Single)
+            return;
         if (!activeStatus)
             return;
         Shoot();
@@ -106,6 +116,8 @@ public class Gun : IWeapon
 
     private void StartShooting()
     {
+        if (Time.time < nextTimeToFire)
+            return;
         isShooting = true;
         nextTimeToFire = Time.time + fireStartDelay;
         if (!isAiming)
@@ -115,7 +127,9 @@ public class Gun : IWeapon
             animator.SetBool("isStrafing", true);
             StartCoroutine(ChangeRightArmRigWeightSmoothly(rightArmRig.weight, 1));
             StartCoroutine(ChangeHeadRigWeightSmoothly(rightArmRig.weight, 1));
-            StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 30));
+            StartCoroutine(ChangeFOVandSentivitySmoothly(
+                tpsCam.m_Lens.FieldOfView, shootFOV, 
+                camController.GetDefaultMouseSensitivity(), shootMouseSensitivity));
         }
         Shoot();
     }
@@ -146,7 +160,9 @@ public class Gun : IWeapon
             animator.SetBool("isStrafing", false);
             StartCoroutine(ChangeRightArmRigWeightSmoothly(rightArmRig.weight, 0));
             StartCoroutine(ChangeHeadRigWeightSmoothly(rightArmRig.weight, 0));
-            StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 40));
+            StartCoroutine(ChangeFOVandSentivitySmoothly(
+                tpsCam.m_Lens.FieldOfView, defaultFOV,
+                camController.GetCurrentMouseSensitivity(), camController.GetDefaultMouseSensitivity()));
         }
     }
 
@@ -161,7 +177,9 @@ public class Gun : IWeapon
             StartCoroutine(ChangeRightArmRigWeightSmoothly(rightArmRig.weight, 1));
             StartCoroutine(ChangeHeadRigWeightSmoothly(rightArmRig.weight, 1));
         }
-        StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 20));
+        StartCoroutine(ChangeFOVandSentivitySmoothly(
+            tpsCam.m_Lens.FieldOfView, aimFOV, 
+            camController.GetCurrentMouseSensitivity(), aimMouseSensitivity));
     }
 
     private void StopAiming()
@@ -174,21 +192,27 @@ public class Gun : IWeapon
             animator.SetBool("isStrafing", false);
             StartCoroutine(ChangeRightArmRigWeightSmoothly(rightArmRig.weight, 0));
             StartCoroutine(ChangeHeadRigWeightSmoothly(rightArmRig.weight, 0));
-            StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 40));
+            StartCoroutine(ChangeFOVandSentivitySmoothly(
+                tpsCam.m_Lens.FieldOfView, defaultFOV,
+                camController.GetCurrentMouseSensitivity(), camController.GetDefaultMouseSensitivity()));
             return;
         }
-        StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 30));
+        StartCoroutine(ChangeFOVandSentivitySmoothly(
+            tpsCam.m_Lens.FieldOfView, shootFOV,
+            camController.GetDefaultMouseSensitivity(), shootMouseSensitivity));
     }
 
-    IEnumerator ChangeFieldOfViewSmoothly(float source, float target)
+    IEnumerator ChangeFOVandSentivitySmoothly(float fovSource, float fovTarget, float sensitivitySource, float sensitivityTarget)
     {
         float startTime = Time.time;
         while (Time.time < startTime + fovSwitchTime)
         {
-            tpsCam.m_Lens.FieldOfView = Mathf.Lerp(source, target, (Time.time - startTime) / fovSwitchTime);
+            tpsCam.m_Lens.FieldOfView = Mathf.Lerp(fovSource, fovTarget, (Time.time - startTime) / fovSwitchTime);
+            camController.SetMouseSensitivity(Mathf.Lerp (sensitivitySource, sensitivityTarget, (Time.time - startTime) / fovSwitchTime));
             yield return null;
         }
-        tpsCam.m_Lens.FieldOfView = target;
+        tpsCam.m_Lens.FieldOfView = fovTarget;
+        camController.SetMouseSensitivity(sensitivityTarget);
     }
 
     IEnumerator ChangeRightArmRigWeightSmoothly(float source, float target)

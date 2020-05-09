@@ -8,11 +8,16 @@ public abstract class IWeapon : MonoBehaviour
     public Animator animator;
     public RigBuilder rigBuilder;
     [HideInInspector] public Camera mainCam;
+    public TPSCamController camController;
+    [HideInInspector] public float defaultFOV, defaultMouseSensitivity;
     public bool activeStatus;
 
-    private void Start()
+    private void Awake()
     {
         mainCam = Camera.main;
+        camController = tpsCam.GetComponent<TPSCamController>();
+        defaultFOV = 40;
+        defaultMouseSensitivity = camController.GetDefaultMouseSensitivity();
     }
 
     public abstract void OnRightClickDown();

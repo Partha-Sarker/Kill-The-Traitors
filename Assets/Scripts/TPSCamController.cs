@@ -1,126 +1,35 @@
-﻿using System.Collections;
-using Cinemachine;
-using UnityEngine;
-using UnityEngine.Animations.Rigging;
-using DG.Tweening;
+﻿using UnityEngine;
 
 public class TPSCamController : MonoBehaviour
 {
     [SerializeField] private WeaponManager weaponManager;
 
     [SerializeField] private Transform CameraTarget;
-    //[SerializeField] private Transform player;
-    //[SerializeField] private Transform orbit;
-    //[SerializeField] private GameObject gunObject;
-    //[SerializeField] private RigBuilder rigBuilder;
 
-    [SerializeField] private int mouseXSpeedMod = 5;
-    [SerializeField] private int mouseYSpeedMod = 5;
+    [SerializeField] private float initialMouseSensitivity = 5, currentMouseSensitivity;
+
     [SerializeField] private int camClampAngle = 40;
     [SerializeField] private float distance = 3f;
-    //[SerializeField] private float fovSwitchTime = .2f;
-    //[SerializeField] private float aimSwitchTime = .2f;
-
-    //[SerializeField] private Animator animator;
-
-    //private enum WeaponType { gun, grenade };
-    //private WeaponType currentWeapon = WeaponType.gun;
-    //private CinemachineVirtualCamera tpsCam;
 
     private Vector3 position;
     private Quaternion rotation;
 
-    //[SerializeField] private Rig rightArmRig;
-    //[SerializeField] private Rig headRig;
-
     private float x = 0.0f;
     private float y = 0.0f;
-    //private bool isShooting = false, isAiming = false;
-    //private bool isAiming = false;
 
     // Use this for initialization
     void Start()
     {
-        //tpsCam = GetComponent<CinemachineVirtualCamera>();
+        ResetMouseSensitivity();
         Vector3 Angles = transform.eulerAngles;
         x = Angles.x;
         y = Angles.y;
     }
 
-    // Update is called once per frame
-    private void Update()
-    {
-        //if(Input.GetAxis("Mouse ScrollWheel") != 0)
-        //{
-        //    if (currentWeapon == WeaponType.gun)
-        //    {
-        //        currentWeapon = WeaponType.grenade;
-        //        animator.SetTrigger("switchWeapon");
-        //        animator.SetBool("isStrafing", true);
-        //        gunObject.SetActive(false);
-        //        rigBuilder.layers[0].active = false;
-        //        rigBuilder.layers[1].active = false;
-        //        rigBuilder.layers[2].active = false;
-        //    }
-        //    else
-        //    {
-        //        currentWeapon = WeaponType.gun;
-        //        animator.SetTrigger("switchWeapon");
-        //        animator.SetBool("isStrafing", false);
-        //        gunObject.SetActive(true);
-        //        rigBuilder.layers[0].active = true;
-        //        rigBuilder.layers[1].active = true;
-        //        rigBuilder.layers[2].active = true;
-        //    }
-        //}
-
-        //if(currentWeapon == WeaponType.grenade)
-        //{
-        //    if (Input.GetMouseButtonDown(0))
-        //    {
-        //        Vector3 rotation = player.eulerAngles;
-        //        rotation.y = transform.eulerAngles.y;
-        //        player.DORotate(rotation, .3f);
-        //        animator.SetTrigger("throwing");
-        //    }
-        //    else if (Input.GetMouseButtonUp(0))
-        //    {
-        //        animator.SetTrigger("throw");
-        //    }
-        //}
-
-        //else
-        //{
-        //    if (Input.GetMouseButtonDown(0))
-        //    {
-        //        isAiming = gun.StartFiring();
-        //    }
-        //    else if (Input.GetMouseButton(0))
-        //    {
-        //        gun.Shoot();
-        //    }
-        //    else if (Input.GetMouseButtonUp(0))
-        //    {
-        //        isAiming = gun.StopFiring();
-        //    }
-
-        //    if (Input.GetMouseButtonDown(1))
-        //    {
-        //        isAiming = gun.StartAiming();
-        //    }
-
-        //    else if (Input.GetMouseButtonUp(1))
-        //    {
-        //        isAiming = gun.StopAiming();
-        //    }
-        //}
-
-    }
-
     void LateUpdate()
     {
-        x += Input.GetAxis("Mouse X") * mouseXSpeedMod;
-        y += Input.GetAxis("Mouse Y") * mouseYSpeedMod * -1;
+        x += Input.GetAxis("Mouse X") * currentMouseSensitivity;
+        y += Input.GetAxis("Mouse Y") * currentMouseSensitivity * -1;
         y = ClampAngle(y, -camClampAngle, camClampAngle);
 
         rotation = Quaternion.Euler(y, x, 0);
@@ -131,18 +40,26 @@ public class TPSCamController : MonoBehaviour
 
         if (weaponManager.currentWeapon != null)
             weaponManager.currentWeapon.OnCamPosRotChanged(position, rotation);
+    }
 
-        //if (isShooting || isAiming)
-        //{
-        //    player.rotation = Quaternion.Euler(player.eulerAngles.x, x, player.eulerAngles.z);
-        //    orbit.localRotation = Quaternion.Euler(y, 0, 0);
-        //}
+    public float GetCurrentMouseSensitivity()
+    {
+        return currentMouseSensitivity;
+    }
 
-        //if (isAiming)
-        //{
-        //    player.rotation = Quaternion.Euler(player.eulerAngles.x, x, player.eulerAngles.z);
-        //    orbit.localRotation = Quaternion.Euler(y, 0, 0);
-        //}
+    public float GetDefaultMouseSensitivity()
+    {
+        return initialMouseSensitivity;
+    }
+
+    public void ResetMouseSensitivity()
+    {
+        currentMouseSensitivity = initialMouseSensitivity;
+    }
+
+    public void SetMouseSensitivity(float mouseSensitivity)
+    {
+        currentMouseSensitivity = mouseSensitivity;
     }
 
     private static float ClampAngle(float angle, float min, float max)
