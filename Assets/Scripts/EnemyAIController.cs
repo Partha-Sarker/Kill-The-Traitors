@@ -7,13 +7,12 @@ public class EnemyAIController : MonoBehaviour
 {
     public bool isRifleUp = false, isAiming = false, isShooting = false, shouldShoot = false, isTargetVisible = false;
 
-    public float aimAngle = 0;
-    public float rotationTime = .5f;
+    public float aimAngle = 0, rotationDelay = .5f;
 
-    public Vector3 rotationOffset;
-
-    public Transform target;
+    public Transform target, fireOrigin;
     private Transform spine, rightShoulder;
+
+    public EnemyGun gun;
 
     public enum EnemyState { idle, alert, aware };
     public EnemyState currentState = EnemyState.idle;
@@ -46,6 +45,7 @@ public class EnemyAIController : MonoBehaviour
     {
         if (currentState == EnemyState.idle)
             return;
+
         ResetEnemy();
     }
 
@@ -71,6 +71,7 @@ public class EnemyAIController : MonoBehaviour
             return;
         ResetEnemy();
 
+        shouldShoot = true;
         if(target != null)
         {
             this.target = target;
@@ -86,17 +87,30 @@ public class EnemyAIController : MonoBehaviour
             Vector3 lookDirection = target.position - rightShoulder.position;
             Quaternion lookRotation = Quaternion.LookRotation(lookDirection);
             aimAngle = lookRotation.eulerAngles.x;
+            gun.Shoot(target);
         }
-
         spine.Rotate(transform.right, aimAngle, Space.World);
+    }
+
+    private void Fire()
+    {
+        Vector3 fireDirection = target.position - fireOrigin.position;
+        fireDirection = Quaternion.LookRotation(fireDirection).eulerAngles;
+        fireDirection.y = transform.eulerAngles.y;
+        fireDirection.z = transform.eulerAngles.z;
+        fireOrigin.eulerAngles = fireDirection;
+
+
+        Vector3 rayDirection = (fireOrigin.forward) * Vector3.Distance(target.position, fireOrigin.position);
+        Debug.DrawRay(fireOrigin.position, rayDirection);
     }
 
     private void RotateTowardsTransform(Transform target)
     {
         Vector3 lookDirection = target.position - transform.position;
         lookDirection.y = 0;
-        Vector3 lookRotation = Quaternion.LookRotation(lookDirection).eulerAngles + rotationOffset;
-        transform.DORotate(lookRotation, rotationTime);
+        Vector3 lookRotation = Quaternion.LookRotation(lookDirection).eulerAngles;
+        transform.DORotate(lookRotation, rotationDelay);
     }
 
     private void ResetEnemy()
