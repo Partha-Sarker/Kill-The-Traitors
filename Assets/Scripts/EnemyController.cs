@@ -44,16 +44,16 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void OnTargetEnter(Collider target)
     {
-        if (!other.CompareTag("Player"))
+        if (!target.CompareTag("Target"))
             return;
 
         if (!playerIsOutside)
         {
             print("Target on outside zone!");
             playerIsOutside = true;
-            SetLooking(other.transform);
+            SetLooking(target.transform);
             return;
         }
 
@@ -61,24 +61,26 @@ public class EnemyController : MonoBehaviour
         {
             print("Target on inside zone!");
             playerIsInside = true;
-            SetAlert(other.transform);
+            SetAlert(target.transform);
             return;
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    public void OnTargetExit(Collider target)
     {
-        if (!other.CompareTag("Player"))
+        if (!target.CompareTag("Target"))
             return;
 
         lastPlayerZoneChangeTime = Time.time;
         if (playerIsInside)
         {
             playerIsInside = false;
+            print("Target on outside zone!");
         }
         else if (playerIsOutside)
         {
             playerIsOutside = false;
+            print("Target has escaped enemy zone!");
         }
     }
 
@@ -174,7 +176,7 @@ public class EnemyController : MonoBehaviour
     {
         if (Physics.Raycast(head.position, target.position - head.position, out RaycastHit hit))
         {
-            if (hit.transform.CompareTag("Player"))
+            if (hit.transform.CompareTag("Target") || hit.transform.CompareTag("Player"))
             {
                 targetVisibility = true;
                 lastVisibleTime = Time.time;

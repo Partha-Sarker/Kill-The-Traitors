@@ -10,7 +10,7 @@ public class Gun : IWeapon
 
     [SerializeField] private Transform player;
     [SerializeField] private ParticleSystem muzzleFlash;
-    [SerializeField] private GameObject hitImpact;
+    [SerializeField] private GameObject hitWallImpact, hitBloodImpact;
     [SerializeField] private Transform orbit;
     [SerializeField] private Rig rightArmRig;
     [SerializeField] private Rig headRig;
@@ -22,6 +22,9 @@ public class Gun : IWeapon
     [SerializeField] private float fovSwitchTime = .2f, shootFOV = 30, aimFOV = 20;
     [SerializeField] private float rightArmRigSwitchTime = .1f, headRigSwitchTime = .2f;
     [SerializeField] private float fireRate, damage, force, fireStartDelay = 0, maxDistance = 100, pushBackAmount, pushBackTime;
+
+
+    public LayerMask shootingMask;
 
     private bool isShooting = false, isAiming = false;
 
@@ -36,9 +39,6 @@ public class Gun : IWeapon
         StartCoroutine(ChangeFOVandSentivitySmoothly(
             tpsCam.m_Lens.FieldOfView, defaultFOV, 
             camController.GetCurrentMouseSensitivity(), camController.GetDefaultMouseSensitivity() ));
-        //rigBuilder.layers[0].active = true;
-        //rigBuilder.layers[1].active = true;
-        //rigBuilder.layers[2].active = true;
         ResetGun();
     }
 
@@ -46,10 +46,6 @@ public class Gun : IWeapon
     {
         this.gameObject.SetActive(false);
         rigBuilder.enabled = false;
-        //StartCoroutine(ChangeFieldOfViewSmoothly(tpsCam.m_Lens.FieldOfView, 40));
-        //rigBuilder.layers[0].active = false;
-        //rigBuilder.layers[1].active = false;
-        //rigBuilder.layers[2].active = false;
         ResetGun();
     }
 
@@ -142,10 +138,17 @@ public class Gun : IWeapon
 
         muzzleFlash.Play();
         nextTimeToFire = Time.time + 1 / fireRate;
-        if (Physics.Raycast(mainCam.transform.position, mainCam.transform.forward, out RaycastHit hit, maxDistance))
+        if (Physics.Raycast(mainCam.transform.position, mainCam.transform.forward, out RaycastHit hit, maxDistance, shootingMask))
         {
-            //print(hit.transform.name);
-            tempHitImpact = Instantiate(hitImpact, hit.point, Quaternion.LookRotation(hit.normal));
+            GameObject tempHitImpact;
+            if (hit.transform.CompareTag("Enemy"))
+            {
+                tempHitImpact = Instantiate(hitBloodImpact, hit.point, Quaternion.LookRotation(hit.normal));
+            }
+            else
+            {
+                tempHitImpact = Instantiate(hitWallImpact, hit.point, Quaternion.LookRotation(hit.normal));
+            }
             Destroy(tempHitImpact, 3);
         }
     }

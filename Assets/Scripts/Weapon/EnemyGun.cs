@@ -8,7 +8,7 @@ public class EnemyGun : MonoBehaviour
 
     [SerializeField] private Transform shootingPoint, shootingOrigin;
     [SerializeField] private ParticleSystem muzzleFlash;
-    [SerializeField] private GameObject hitWallImpact;
+    [SerializeField] private GameObject hitWallImpact, hitBloodImpact;
 
     public float shootingSpread = 0, minimumShootingDelay = .15f, randomShootingDelay = .2f, maxShootingDistance = 100;
     private float nextTimeToFire = 0;
@@ -48,8 +48,15 @@ public class EnemyGun : MonoBehaviour
 
         if (Physics.Raycast(shootingOrigin.position, shootingOrigin.forward, out RaycastHit hit, maxShootingDistance))
         {
-            //print(hit.transform.name);
-            GameObject tempHitImpact = Instantiate(hitWallImpact, hit.point, Quaternion.LookRotation(hit.normal));
+            GameObject tempHitImpact;
+            if (hit.transform.CompareTag("Target") || hit.transform.CompareTag("Player"))
+            {
+                tempHitImpact = Instantiate(hitBloodImpact, hit.point, Quaternion.LookRotation(hit.normal));
+            }
+            else
+            {
+                tempHitImpact = Instantiate(hitWallImpact, hit.point, Quaternion.LookRotation(hit.normal));
+            }
             Destroy(tempHitImpact, 3);
         }
 
