@@ -227,7 +227,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5888688498033889652}
-  - component: {fileID: 5888688498033724757}
   - component: {fileID: 5888688498033724758}
   m_Layer: 0
   m_Name: m416 auto
@@ -255,36 +254,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -68.485, y: 80.316, z: 1.7880001}
---- !u!114 &5888688498033724757
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5888688498033724756}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a51f1dd50b0c7cb488493d538a3fdce7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 0}
-  tpsCam: {fileID: 0}
-  muzzleFlash: {fileID: 6317590604230212936}
-  hitImpact: {fileID: 2425389360255588032, guid: 95951056fdc34304482aac6275b7feba,
-    type: 3}
-  orbit: {fileID: 0}
-  rightArmRig: {fileID: 0}
-  headRig: {fileID: 0}
-  fovSwitchTime: 0.2
-  rightArmRigSwitchTime: 0
-  headRigSwitchTime: 0.2
-  fireRate: 10
-  damage: 0
-  force: 0
-  fireStartDelay: 0
-  maxDistance: 100
-  pushBackAmount: -0.08
-  pushBackTime: 0.035
 --- !u!114 &5888688498033724758
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,18 +268,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tpsCam: {fileID: 0}
   animator: {fileID: 0}
+  rigBuilder: {fileID: 0}
   mainCam: {fileID: 0}
+  camController: {fileID: 0}
+  defaultFOV: 0
+  defaultMouseSensitivity: 0
   activeStatus: 0
   mode: 0
   player: {fileID: 0}
   muzzleFlash: {fileID: 6317590604230212936}
-  hitImpact: {fileID: 2425389360255588032, guid: 95951056fdc34304482aac6275b7feba,
-    type: 3}
+  hitWallImpact: {fileID: 0}
+  hitBloodImpact: {fileID: 0}
   orbit: {fileID: 0}
-  rigBuilder: {fileID: 0}
   rightArmRig: {fileID: 0}
   headRig: {fileID: 0}
+  shootMouseSensitivity: 4
+  aimMouseSensitivity: 3
   fovSwitchTime: 0.2
+  shootFOV: 30
+  aimFOV: 20
   rightArmRigSwitchTime: 0
   headRigSwitchTime: 0.2
   fireRate: 10
@@ -320,6 +296,9 @@ MonoBehaviour:
   maxDistance: 100
   pushBackAmount: -0.07
   pushBackTime: 0.04
+  shootingMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &5888688498196581663
 GameObject:
   m_ObjectHideFlags: 0

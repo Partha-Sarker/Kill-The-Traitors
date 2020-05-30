@@ -4,32 +4,35 @@ using UnityEngine;
 
 public class DemoTPSCamera : MonoBehaviour
 {
+    private Transform cam;
     public Transform CameraTarget;
+
+    public int mouseXSpeedMod = 5;
+    public int mouseYSpeedMod = 5;
+
+    public int yLookAngleLimit = 40;
+    public float distance = 3f;
+
     private float x = 0.0f;
     private float y = 0.0f;
-
-    private int mouseXSpeedMod = 5;
-    private int mouseYSpeedMod = 5;
 
     public float MaxViewDistance = 15f;
     public float MinViewDistance = 1f;
     public int ZoomRate = 20;
     private int lerpRate = 5;
-    private float distance = 3f;
     private float desireDistance;
     private float correctedDistance;
     private float currentDistance;
 
     public float cameraTargetHeight = 1.0f;
 
-    //checks if first person mode is on
     private bool click = false;
-    //stores cameras distance from player
+
     private float curDist = 0;
 
-    // Use this for initialization
     void Start()
     {
+        cam = Camera.main.transform;
         Vector3 Angles = transform.eulerAngles;
         x = Angles.x;
         y = Angles.y;
@@ -38,22 +41,12 @@ public class DemoTPSCamera : MonoBehaviour
         correctedDistance = distance;
     }
 
-    // Update is called once per frame
     void LateUpdate()
     {
-        if (Input.GetMouseButton(1))
-        {/*0 mouse btn izq, 1 mouse btn der*/
-            x += Input.GetAxis("Mouse X") * mouseXSpeedMod;
-            y += Input.GetAxis("Mouse Y") * mouseYSpeedMod;
-        }
-        else if (Input.GetAxis("Vertical") != 0 || Input.GetAxis("Horizontal") != 0)
-        {
-            float targetRotantionAngle = CameraTarget.eulerAngles.y;
-            float cameraRotationAngle = transform.eulerAngles.y;
-            x = Mathf.LerpAngle(cameraRotationAngle, targetRotantionAngle, lerpRate * Time.deltaTime);
-        }
+        x += Input.GetAxis("Mouse X") * mouseXSpeedMod;
+        y += Input.GetAxis("Mouse Y") * mouseYSpeedMod * -1;
 
-        y = ClampAngle(y, -15, 25);
+        y = ClampAngle(y, -yLookAngleLimit, yLookAngleLimit);
         Quaternion rotation = Quaternion.Euler(y, x, 0);
 
         desireDistance -= Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * ZoomRate * Mathf.Abs(desireDistance);
@@ -73,43 +66,12 @@ public class DemoTPSCamera : MonoBehaviour
             isCorrected = true;
         }
 
-        //?
-        //condicion ? first_expresion : second_expresion;
-        //(input > 0) ? isPositive : isNegative;
-
         currentDistance = !isCorrected || correctedDistance > currentDistance ? Mathf.Lerp(currentDistance, correctedDistance, Time.deltaTime * ZoomRate) : correctedDistance;
 
         position = CameraTarget.position - (rotation * Vector3.forward * currentDistance + new Vector3(0, -cameraTargetHeight, 0));
 
-        transform.rotation = rotation;
-        transform.position = position;
-
-        //CameraTarget.rotation = rotation;
-
-        float cameraX = transform.rotation.x;
-        //checks if right mouse button is pushed
-        if (Input.GetMouseButton(1))
-        {
-            //sets CHARACTERS x rotation to match cameras x rotation
-            CameraTarget.eulerAngles = new Vector3(cameraX, transform.eulerAngles.y, transform.eulerAngles.z);
-        }
-        //checks if middle mouse button is pushed down
-        if (Input.GetMouseButtonDown(2))
-        {
-            //if middle mouse button is pressed 1st time set click to true and camera in front of player and save cameras position before mmb.
-            //if mmb is pressed again set camera back to it's position before we clicked mmb 1st time and set click to false
-            if (click == false)
-            {
-                click = true;
-                curDist = distance;
-                distance = distance - distance - 1;
-            }
-            else
-            {
-                distance = curDist;
-                click = false;
-            }
-        }
+        cam.transform.rotation = rotation;
+        cam.transform.position = position;
 
     }
 

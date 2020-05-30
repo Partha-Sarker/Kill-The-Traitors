@@ -35,6 +35,11 @@ public class TPSCamController : MonoBehaviour
         rotation = Quaternion.Euler(y, x, 0);
         position = CameraTarget.position - (rotation * Vector3.forward * distance);
 
+        //if (Physics.Linecast(CameraTarget.position, position, out RaycastHit collisionHit))
+        //{
+        //    position = collisionHit.point;
+        //}
+
         transform.rotation = rotation;
         transform.position = position;
 
