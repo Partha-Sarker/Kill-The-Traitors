@@ -6,9 +6,15 @@ public class PlayerMovementController : MonoBehaviour
     private Animator animator;
     public Transform cam;
 
-    [SerializeField] private float rotationHardness = 10;
+    private Rigidbody rb;
+
+    public bool isGrounded;
+
+    [Range(0f, 1f)] public float horizontalJumpLimit;
+    [SerializeField] private float jumpForce = 10, rotationHardness = 10;
     [SerializeField] private float inputLerpTime = .1f, minimumInputValue = .01f;
 
+    private Vector3 force;
 
     private float hInput, vInput, rawHInput, rawVInput, speedMultiplier = 1;
     private Quaternion rotation;
@@ -17,6 +23,7 @@ public class PlayerMovementController : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -43,17 +50,16 @@ public class PlayerMovementController : MonoBehaviour
             rotation.z = transform.rotation.z;
             transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationHardness);
         }
+
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            animator.applyRootMotion = false;
+            force.x = hInput * horizontalJumpLimit;
+            force.y = 1;
+            force.z = vInput * horizontalJumpLimit;
+            rb.AddRelativeForce(force * jumpForce, ForceMode.Impulse);
+            animator.SetTrigger("jump");
+        }
     }
 
-    private void LateUpdate()
-    {
-        //if (rawHInput != 0 || rawVInput != 0)
-        //{
-        //    rotation = cam.rotation;
-        //    rotation.x = transform.rotation.x;
-        //    rotation.z = transform.rotation.z;
-        //    transform.rotation = rotation;
-        //    //transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSmoothness);
-        //}
-    }
 }
