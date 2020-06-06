@@ -6,6 +6,7 @@ public abstract class WeaponBehaviour : MonoBehaviour
 {
     public CinemachineFreeLook tpsCam;
     public Animator animator;
+    public Transform playerTarget;
     [HideInInspector] public Transform spine;
     [HideInInspector] public Camera mainCam;
     [HideInInspector] public float defaultFOV;
@@ -18,12 +19,14 @@ public abstract class WeaponBehaviour : MonoBehaviour
         spine = animator.GetBoneTransform(HumanBodyBones.Spine);
     }
 
-    public abstract void OnRightClickDown();
-    public abstract void OnRightClickHold();
-    public abstract void OnRightClickUp();
-    public abstract void OnLeftClickDown();
-    public abstract void OnLeftClickHold();
-    public abstract void OnLeftClickUp();
+    public abstract void OnRightKeyDown();
+    public abstract void OnRightKeyHold();
+    public abstract void OnRightKeyUp();
+    public abstract void OnLeftKeyDown();
+    public abstract void OnLeftKeykHold();
+    public abstract void OnLeftKeyUp();
+    public abstract void OnMiddleKeyDown();
+    public abstract void OnMiddleKeyUp();
     public abstract void Equip();
     public abstract void Discard();
 }

@@ -8,19 +8,21 @@ public class GunAndGrenade : WeaponBehaviour
     public enum GunMode { Auto, Single };
     public GunMode mode = GunMode.Auto;
 
-    [SerializeField] private Transform player;
+    [SerializeField] private Transform player, grenadePos;
     [SerializeField] private ParticleSystem muzzleFlash;
-    [SerializeField] private GameObject hitWallImpact, hitBloodImpact;
+    [SerializeField] private GameObject hitWallImpact, hitBloodImpact, grenade, tempGrenade;
 
-    [SerializeField] private float shootMouseSensitivity = 4, aimMouseSensitivity = 3;
-    [SerializeField] private float fovSwitchTime = .2f, aimFOV = 20, camAngle, aimRotaionLerpTime = .1f;
-    [SerializeField] private float fireRate, damage, force, fireStartDelay = 0, maxDistance = 10, reloadDelay = .5f;
+    [SerializeField] private float throwingForce = 5;
+    [SerializeField] private Vector3 throwingOffset;
+
+    [SerializeField] private float fovSwitchTime = .2f, aimFOV = 20, camAngle, coolDownTime = 2, lastActiveTime;
+    [SerializeField] private float fireRate, fireStartDelay = 0, maxDistance = 10;
     [SerializeField] private int maximumAmmo = 30, currentAmmo;
 
 
     public LayerMask shootingMask;
 
-    private bool isShooting = false, isAiming = false, isReloading;
+    private bool isShooting = false, isAiming = false, isRifleDown = false, isReloading;
 
     private float nextTimeToFire = 0;
 
@@ -34,20 +36,50 @@ public class GunAndGrenade : WeaponBehaviour
         if (activeStatus == false)
             return;
 
-        Quaternion camRotation = mainCam.transform.rotation;
-        player.rotation = Quaternion.Euler(player.eulerAngles.x, camRotation.eulerAngles.y, player.eulerAngles.z);
+        if (Input.GetKeyDown(KeyCode.R))
+            StartReloading();
 
-        camAngle = camRotation.eulerAngles.x;
-        spine.Rotate(player.transform.right, camAngle, Space.World);
+        if(!isAiming && !isShooting)
+        {
+            if (!isRifleDown && (Time.time - lastActiveTime) > coolDownTime)
+            {
+                isRifleDown = true;
+                animator.SetBool("rifleDown", true);
+            }
+        }
+        else
+        {
+            if (isRifleDown)
+            {
+                isRifleDown = false;
+                animator.SetBool("rifleDown", false);
+            }
+            lastActiveTime = Time.time;
+        }
+
+        if(Input.GetKeyDown(KeyCode.LeftShift) && !isAiming && !isShooting && !isRifleDown)
+        {
+            isRifleDown = true;
+            animator.SetBool("rifleDown", true);
+        }
+
+        if (!isRifleDown)
+        {
+            Quaternion camRotation = mainCam.transform.rotation;
+            player.rotation = Quaternion.Euler(player.eulerAngles.x, camRotation.eulerAngles.y, player.eulerAngles.z);
+            camAngle = camRotation.eulerAngles.x;
+            spine.Rotate(player.transform.right, camAngle, Space.World);
+        }
 
 
     }
 
     public override void Equip()
     {
-        this.gameObject.SetActive(true);
         //animator.SetTrigger("switchToRifle");
+        this.gameObject.SetActive(true);
         nextTimeToFire = Time.time;
+        lastActiveTime = Time.time;
         StartCoroutine(ChangeFOVandSentivitySmoothly(tpsCam.m_Lens.FieldOfView, defaultFOV));
         activeStatus = true;
         if (currentAmmo == 0)
@@ -66,16 +98,17 @@ public class GunAndGrenade : WeaponBehaviour
     {
         isShooting = false;
         isAiming = false;
+        isRifleDown = false;
         //animator.SetBool("isAiming", false);
         //animator.SetBool("isStrafing", false);
     }
 
-    public override void OnLeftClickDown()
+    public override void OnLeftKeyDown()
     {
         StartShooting();
     }
 
-    public override void OnLeftClickHold()
+    public override void OnLeftKeykHold()
     {
         if (mode == GunMode.Single)
             return;
@@ -84,31 +117,39 @@ public class GunAndGrenade : WeaponBehaviour
         Shoot();
     }
 
-    public override void OnLeftClickUp()
+    public override void OnLeftKeyUp()
     {
         if (!activeStatus)
             return;
         StopShooting();
     }
 
-    public override void OnRightClickDown()
+    public override void OnRightKeyDown()
     {
         activeStatus = true;
         StartAiming();
     }
 
-    public override void OnRightClickHold()
+    public override void OnRightKeyHold()
     {
         return;
     }
 
-    public override void OnRightClickUp()
+    public override void OnRightKeyUp()
     {
         if (!activeStatus)
             return;
         StopAiming();
     }
 
+    public override void OnMiddleKeyDown()
+    {
+        StartThrowingGrenade();        
+    }
+    public override void OnMiddleKeyUp()
+    {
+        return;
+    }
 
     private void StartShooting()
     {
@@ -119,8 +160,6 @@ public class GunAndGrenade : WeaponBehaviour
         if (!isAiming)
         {
             StopAllCoroutines();
-            //animator.SetBool("isAiming", true);
-            //animator.SetBool("isStrafing", true);
         }
         Shoot();
     }
@@ -138,6 +177,7 @@ public class GunAndGrenade : WeaponBehaviour
             if (hit.transform.CompareTag("Enemy"))
             {
                 tempHitImpact = Instantiate(hitBloodImpact, hit.point, Quaternion.LookRotation(hit.normal));
+                hit.transform.GetComponent<EnemyController>().SetAware(playerTarget);
             }
             else
             {
@@ -148,7 +188,7 @@ public class GunAndGrenade : WeaponBehaviour
         currentAmmo--;
         if (currentAmmo == 0)
         {
-            Invoke("StartReloading", reloadDelay);
+            StartReloading();
         }
     }
 
@@ -159,8 +199,6 @@ public class GunAndGrenade : WeaponBehaviour
         if (!isAiming)
         {
             isShooting = false;
-            //animator.SetBool("isAiming", isShooting = false);
-            //animator.SetBool("isStrafing", false);
             StartCoroutine(ChangeFOVandSentivitySmoothly(tpsCam.m_Lens.FieldOfView, defaultFOV));
         }
     }
@@ -169,11 +207,6 @@ public class GunAndGrenade : WeaponBehaviour
     {
         isAiming = true;
         StopAllCoroutines();
-        if (!isShooting)
-        {
-            //animator.SetBool("isAiming", true);
-            //animator.SetBool("isStrafing", true);
-        }
         StartCoroutine(ChangeFOVandSentivitySmoothly(tpsCam.m_Lens.FieldOfView, aimFOV));
     }
 
@@ -184,15 +217,28 @@ public class GunAndGrenade : WeaponBehaviour
         if (!isShooting)
         {
             isShooting = false;
-            //animator.SetBool("isAiming", isShooting = false);
-            //animator.SetBool("isStrafing", false);
             StartCoroutine(ChangeFOVandSentivitySmoothly(tpsCam.m_Lens.FieldOfView, defaultFOV));
             return;
         }
     }
 
+    private void StartThrowingGrenade()
+    {
+        animator.SetTrigger("throw");
+        tempGrenade = Instantiate(grenade, grenadePos);
+    }
+
+    public void ThrowGrenade()
+    {
+        tempGrenade.GetComponent<Grenade>().StartThrowingPreparation();
+        tempGrenade.GetComponent<Rigidbody>().AddForce(mainCam.transform.forward * throwingForce + throwingOffset, ForceMode.VelocityChange);
+    }
+
     public void StartReloading()
     {
+        if (currentAmmo == maximumAmmo)
+            return;
+
         isReloading = true;
         animator.SetTrigger("reload");
     }

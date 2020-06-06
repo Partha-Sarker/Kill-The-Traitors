@@ -28,25 +28,30 @@ public class WeaponAndThrowableManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            currentWeapon.OnLeftClickDown();
+            currentWeapon.OnLeftKeyDown();
         }
         else if (Input.GetMouseButton(0))
         {
-            currentWeapon.OnLeftClickHold();
+            currentWeapon.OnLeftKeykHold();
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            currentWeapon.OnLeftClickUp();
+            currentWeapon.OnLeftKeyUp();
         }
 
         if (Input.GetMouseButtonDown(1))
         {
-            currentWeapon.OnRightClickDown();
+            currentWeapon.OnRightKeyDown();
         }
 
         else if (Input.GetMouseButtonUp(1))
         {
-            currentWeapon.OnRightClickUp();
+            currentWeapon.OnRightKeyUp();
+        }
+
+        if (Input.GetMouseButtonDown(2))
+        {
+            currentWeapon.OnMiddleKeyDown();
         }
     }
 

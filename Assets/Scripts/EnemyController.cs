@@ -6,7 +6,7 @@ public class EnemyController : MonoBehaviour
     private bool targetVisibility = false, playerIsOutside = false, playerIsInside = false;
 
     public float visionLimit = 30, rotationDelay = .5f, stateCooldown = 3;
-    private float aimAngle = 0, lastVisibleTime, lastPlayerZoneChangeTime;
+    private float aimAngle = 0, lastVisibleTime, lastPlayerZoneChangeTime, lastStateChangeTime;
 
     public Transform target;
     private Transform spine, rightShoulder, head;
@@ -110,6 +110,8 @@ public class EnemyController : MonoBehaviour
             return;
         ResetEnemy();
 
+        this.target = target;
+        RotateTowardsTarget();
         currentState = EnemyState.aware;
         this.target = target;
         animator.SetBool("isAiming", true);
@@ -127,7 +129,7 @@ public class EnemyController : MonoBehaviour
 
     private void CheckCooldown()
     {
-        if(Time.time - lastVisibleTime > stateCooldown && Time.time - lastPlayerZoneChangeTime > stateCooldown)
+        if(Time.time - lastVisibleTime > stateCooldown && Time.time - lastStateChangeTime > stateCooldown)
         {
             if (!playerIsOutside)
                 SetIdle();
@@ -199,6 +201,7 @@ public class EnemyController : MonoBehaviour
 
     private void ResetEnemy()
     {
+        lastStateChangeTime = Time.time;
         targetVisibility = false;
         animator.SetBool("isAiming", false);
         animator.SetBool("isAlert", false);

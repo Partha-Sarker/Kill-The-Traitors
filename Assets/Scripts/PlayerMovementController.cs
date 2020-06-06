@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using DG.Tweening;
 
 public class PlayerMovementController : MonoBehaviour
 {
@@ -32,6 +33,11 @@ public class PlayerMovementController : MonoBehaviour
         rawHInput = Input.GetAxisRaw("Horizontal");
         rawVInput = Input.GetAxisRaw("Vertical");
 
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+            DOTween.To(() => speedMultiplier, x => speedMultiplier = x, 2, .3f);
+        else if(Input.GetKeyUp(KeyCode.LeftShift))
+            DOTween.To(() => speedMultiplier, x => speedMultiplier = x, 1, .3f);
+
         hInput = Mathf.Lerp(hInput, rawHInput, inputLerpTime);
         vInput = Mathf.Lerp(vInput, rawVInput, inputLerpTime);
 
@@ -40,8 +46,8 @@ public class PlayerMovementController : MonoBehaviour
         if(Mathf.Abs(vInput) < minimumInputValue && rawVInput == 0)
             vInput = 0;
 
-        animator.SetFloat("vInput", vInput);
-        animator.SetFloat("hInput", hInput);
+        animator.SetFloat("vInput", vInput * speedMultiplier);
+        animator.SetFloat("hInput", hInput * speedMultiplier);
 
         if (rawVInput != 0 || rawHInput != 0)
         {
