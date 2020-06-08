@@ -14,7 +14,7 @@ public class GroundCheck : MonoBehaviour
         {
             controller.isGrounded = true;
             animator.SetBool("isGrounded", true);
-            animator.applyRootMotion = true;
+            //animator.applyRootMotion = true;
         }
     }
 
