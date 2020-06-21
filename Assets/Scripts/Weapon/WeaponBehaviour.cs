@@ -7,6 +7,7 @@ public abstract class WeaponBehaviour : MonoBehaviour
     public CinemachineFreeLook tpsCam;
     public Animator animator;
     public Transform playerTarget;
+    public PlayerMovementController playerMovementController;
     [HideInInspector] public Transform spine;
     [HideInInspector] public Camera mainCam;
     [HideInInspector] public float defaultFOV;

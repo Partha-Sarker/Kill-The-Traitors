@@ -17,7 +17,7 @@ public class GunAndGrenade : WeaponBehaviour
 
     [SerializeField] private float fovSwitchTime = .2f, aimFOV = 20, camAngle, coolDownTime = 2, lastActiveTime;
     [SerializeField] private float fireRate, fireStartDelay = 0, maxDistance = 10;
-    [SerializeField] private int maximumAmmo = 30, currentAmmo;
+    [SerializeField] private int maximumAmmo = 30, currentAmmo, damage = 20;
 
 
     public LayerMask shootingMask;
@@ -43,16 +43,14 @@ public class GunAndGrenade : WeaponBehaviour
         {
             if (!isRifleDown && (Time.time - lastActiveTime) > coolDownTime)
             {
-                isRifleDown = true;
-                animator.SetBool("rifleDown", true);
+                SetRifleDown();
             }
         }
         else
         {
             if (isRifleDown)
             {
-                isRifleDown = false;
-                animator.SetBool("rifleDown", false);
+                SetRifleUp();
             }
             lastActiveTime = Time.time;
         }
@@ -76,12 +74,11 @@ public class GunAndGrenade : WeaponBehaviour
 
     public override void Equip()
     {
-        //animator.SetTrigger("switchToRifle");
         this.gameObject.SetActive(true);
+        activeStatus = true;
         nextTimeToFire = Time.time;
         lastActiveTime = Time.time;
         StartCoroutine(ChangeFOVandSentivitySmoothly(tpsCam.m_Lens.FieldOfView, defaultFOV));
-        activeStatus = true;
         if (currentAmmo == 0)
             StartReloading();
         ResetGun();
@@ -89,18 +86,17 @@ public class GunAndGrenade : WeaponBehaviour
 
     public override void Discard()
     {
-        this.gameObject.SetActive(false);
         activeStatus = false;
         ResetGun();
+        this.gameObject.SetActive(false);
     }
 
     private void ResetGun()
     {
         isShooting = false;
         isAiming = false;
-        isRifleDown = false;
-        //animator.SetBool("isAiming", false);
-        //animator.SetBool("isStrafing", false);
+        isRifleDown = true;
+        animator.SetBool("rifleDown", true);
     }
 
     public override void OnLeftKeyDown()
@@ -146,6 +142,7 @@ public class GunAndGrenade : WeaponBehaviour
     {
         StartThrowingGrenade();        
     }
+
     public override void OnMiddleKeyUp()
     {
         return;
@@ -163,6 +160,7 @@ public class GunAndGrenade : WeaponBehaviour
         }
         Shoot();
     }
+
     private void Shoot()
     {
         if (Time.time < nextTimeToFire || isReloading || currentAmmo <= 0)
@@ -178,6 +176,7 @@ public class GunAndGrenade : WeaponBehaviour
             {
                 tempHitImpact = Instantiate(hitBloodImpact, hit.point, Quaternion.LookRotation(hit.normal));
                 hit.transform.GetComponent<EnemyController>().SetAware(playerTarget);
+                hit.transform.GetComponent<Character>().TakeDamge(damage);
             }
             else
             {
@@ -222,9 +221,25 @@ public class GunAndGrenade : WeaponBehaviour
         }
     }
 
+    private void SetRifleDown()
+    {
+        isRifleDown = true;
+        animator.SetBool("rifleDown", true);
+        playerMovementController.SetWalking();
+    }
+
+    private void SetRifleUp()
+    {
+        isRifleDown = false;
+        animator.SetBool("rifleDown", false);
+        playerMovementController.SetStafing();
+        lastActiveTime = Time.time;
+    }
+
     private void StartThrowingGrenade()
     {
         animator.SetTrigger("throw");
+        SetRifleUp();
         tempGrenade = Instantiate(grenade, grenadePos);
     }
 

@@ -12,6 +12,7 @@ public class EnemyGun : MonoBehaviour
 
     public float shootingSpread = 0, minimumShootingDelay = .15f, randomShootingDelay = .2f, maxShootingDistance = 100;
     private float nextTimeToFire = 0;
+    public int damage = 15;
 
     // Start is called before the first frame update
     void Start()
@@ -52,6 +53,7 @@ public class EnemyGun : MonoBehaviour
             if (hit.transform.CompareTag("Target") || hit.transform.CompareTag("Player"))
             {
                 tempHitImpact = Instantiate(hitBloodImpact, hit.point, Quaternion.LookRotation(hit.normal));
+                hit.transform.GetComponent<Character>().TakeDamge(damage);
             }
             else
             {

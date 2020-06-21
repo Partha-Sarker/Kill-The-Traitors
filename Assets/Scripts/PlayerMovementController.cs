@@ -6,7 +6,7 @@ public class PlayerMovementController : MonoBehaviour
 {
     private Animator animator;
     public Transform cam;
-    public enum MovementState { walking, strafing, crouching, proning };
+    public enum MovementState { walking, strafing, crouching, proning, still };
     public MovementState currentMovementState = MovementState.walking;
 
     private Rigidbody rb;
@@ -62,22 +62,9 @@ public class PlayerMovementController : MonoBehaviour
 
         MovePlayer();
 
-        //if (rawVInput != 0 || rawHInput != 0)
-        //{
-        //    rotation = cam.rotation;
-        //    rotation.x = transform.rotation.x;
-        //    rotation.z = transform.rotation.z;
-        //    transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationHardness);
-        //}
-
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump"))
         {
-            //animator.applyRootMotion = false;
-            force.x = smoothInput.x * horizontalJumpLimit;
-            force.y = 1;
-            force.z = smoothInput.y * horizontalJumpLimit;
-            rb.AddRelativeForce(force * jumpForce, ForceMode.Impulse);
-            animator.SetTrigger("jump");
+            Jump();
         }
 
     }
@@ -97,13 +84,17 @@ public class PlayerMovementController : MonoBehaviour
 
     private void RotatePlayer()
     {
-        if (smoothInput.magnitude > .2f)
-        {
-            relativeAngle = Mathf.Atan2(smoothInput.x, smoothInput.y) * Mathf.Rad2Deg;
-            rotation = Vector3.zero;
+        if (smoothInput.magnitude < .2f || !isGrounded)
+            return;
+
+        relativeAngle = Mathf.Atan2(smoothInput.x, smoothInput.y) * Mathf.Rad2Deg;
+        rotation = Vector3.zero;
+        if (currentMovementState == MovementState.walking)
             rotation.y = cam.eulerAngles.y + relativeAngle;
-            transform.DORotate(rotation, rotationTime);
-        }
+        else if (currentMovementState == MovementState.strafing)
+            rotation.y = cam.eulerAngles.y;
+
+        transform.DORotate(rotation, rotationTime);
     }
 
     private void MovePlayer()
@@ -112,7 +103,7 @@ public class PlayerMovementController : MonoBehaviour
             return;
         rotation = cam.eulerAngles;
         rotation.x = 0;
-        Vector3 camForward =Quaternion.Euler(rotation) * Vector3.forward * moveSpeed;
+        Vector3 camForward =Quaternion.Euler(rotation) * Vector3.forward;
         Vector3 moveDirection = Quaternion.AngleAxis(relativeAngle, transform.up) * camForward;
         moveDirection = moveDirection.normalized;
         Vector3 moveVelocity = moveDirection * moveSpeed * smoothInput.magnitude * speedMultiplier;
@@ -120,6 +111,20 @@ public class PlayerMovementController : MonoBehaviour
         rb.velocity = moveVelocity;
 
         //Debug.DrawLine(transform.position, transform.position + moveDirection);
+    }
+
+    private void Jump()
+    {
+        if (!isGrounded)
+            return;
+        if (currentMovementState == MovementState.still)
+            return;
+
+        force.x = smoothInput.x * horizontalJumpLimit;
+        force.y = 1;
+        force.z = smoothInput.y * horizontalJumpLimit;
+        rb.AddRelativeForce(force * jumpForce, ForceMode.Impulse);
+        animator.SetTrigger("jump");
     }
 
     public void SetWalking()
@@ -130,6 +135,11 @@ public class PlayerMovementController : MonoBehaviour
     public void SetStafing()
     {
         currentMovementState = MovementState.strafing;
+    }
+
+    public void SetStill()
+    {
+        currentMovementState = MovementState.still;
     }
 
 }

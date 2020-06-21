@@ -12,7 +12,7 @@ public class WeaponAndThrowableManager : MonoBehaviour
     {
         currentWeaponIndex = 0;
         currentWeapon = allWeapon[currentWeaponIndex];
-        //currentWeapon.Equip();
+        currentWeapon.Equip();
     }
 
     // Update is called once per frame
