@@ -46,7 +46,7 @@ public class EnemyController : MonoBehaviour
 
     public void OnTargetEnter(Collider target)
     {
-        if (!target.CompareTag("Target"))
+        if (!target.CompareTag("Player"))
             return;
 
         if (!playerIsOutside)

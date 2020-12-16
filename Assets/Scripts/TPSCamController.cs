@@ -2,20 +2,21 @@
 
 public class TPSCamController : MonoBehaviour
 {
-    [SerializeField] private WeaponManager weaponManager;
-
     [SerializeField] private Transform CameraTarget;
 
-    [SerializeField] private float initialMouseSensitivity = 5, currentMouseSensitivity;
+    [SerializeField] private float initialMouseSensitivity = 5;
+    private float currentMouseSensitivity;
 
     [SerializeField] private int camClampAngle = 40;
-    [SerializeField] private float distance = 3f;
+    //[SerializeField] private float targetDistance = 1f, targetHeight = 1f, targetOffset = 1f;
+    [SerializeField] private Vector3 targetOffset = new Vector3(1, 1.6f, 1);
 
-    private Vector3 position;
+    [SerializeField] private LayerMask camCollision;
+
+    [SerializeField] private Vector3 camPosition, camCenterPosition, targetPosition, targetCenterPosition;
     private Quaternion rotation;
 
-    private float x = 0.0f;
-    private float y = 0.0f;
+    public float x = 0.0f, y = 0.0f;
 
     // Use this for initialization
     void Start()
@@ -28,23 +29,56 @@ public class TPSCamController : MonoBehaviour
 
     void LateUpdate()
     {
+        SetDesiredCamPosition();
+
+        transform.position = camPosition;
+    }
+
+    private void SetDesiredCamPosition()
+    {
+        targetPosition = CameraTarget.position;
+        targetPosition.y += targetOffset.y;
+
         x += Input.GetAxis("Mouse X") * currentMouseSensitivity;
         y += Input.GetAxis("Mouse Y") * currentMouseSensitivity * -1;
         y = ClampAngle(y, -camClampAngle, camClampAngle);
 
-        rotation = Quaternion.Euler(y, x, 0);
-        position = CameraTarget.position - (rotation * Vector3.forward * distance);
+        if (Mathf.Abs(x) > 360)
+            x %= 360;
 
-        //if (Physics.Linecast(CameraTarget.position, position, out RaycastHit collisionHit))
-        //{
-        //    position = collisionHit.point;
-        //}
+        rotation = Quaternion.Euler(y, x, 0);
+
+        camCenterPosition = CameraTarget.position - (rotation * Vector3.forward * targetOffset.z);
+        camCenterPosition.y += targetOffset.y;
 
         transform.rotation = rotation;
-        transform.position = position;
+        transform.position = camCenterPosition;
 
-        if (weaponManager.currentWeapon != null)
-            weaponManager.currentWeapon.OnCamPosRotChanged(position, rotation);
+        camPosition = camCenterPosition + (transform.right * targetOffset.x);
+
+        transform.position = camPosition;
+
+        targetCenterPosition = camPosition + (rotation * Vector3.forward * targetOffset.z);
+
+        Debug.DrawLine(targetPosition, camPosition);
+        //Debug.DrawLine(targetCenterPosition, camPosition);
+        //Debug.DrawLine(camCenterPosition, targetPosition);
+    }
+
+    private void HandleCamCollision()
+    {
+        if (Physics.Linecast(targetPosition, camPosition, out RaycastHit hit, camCollision))
+        {
+            camPosition = hit.point;
+        }
+        //else if (Physics.Linecast(targetCenterPosition, camPosition, out RaycastHit targetCenterHit, camCollision))
+        //{
+        //    camPosition = targetCenterHit.point;
+        //}
+        //if (Physics.Linecast(targetPosition, camCenterPosition, out RaycastHit camCenterHit, camCollision))
+        //{
+        //    camPosition += camCenterHit.point + (transform.right * offset.x);
+        //}
     }
 
     public float GetCurrentMouseSensitivity()

@@ -103,7 +103,7 @@ public class PlayerMovementController : MonoBehaviour
             return;
         rotation = cam.eulerAngles;
         rotation.x = 0;
-        Vector3 camForward =Quaternion.Euler(rotation) * Vector3.forward;
+        Vector3 camForward = Quaternion.Euler(rotation) * Vector3.forward;
         Vector3 moveDirection = Quaternion.AngleAxis(relativeAngle, transform.up) * camForward;
         moveDirection = moveDirection.normalized;
         Vector3 moveVelocity = moveDirection * moveSpeed * smoothInput.magnitude * speedMultiplier;
