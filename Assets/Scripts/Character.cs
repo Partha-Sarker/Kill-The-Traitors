@@ -24,10 +24,21 @@ public class Character : MonoBehaviour
 
     private void Die()
     {
-        if (transform.CompareTag("Player"))
-            return;
         GetComponent<Animator>().SetBool("isDead", true);
         GetComponent<Animator>().SetTrigger("die");
-        Destroy(this.gameObject, 3);
+
+        if (transform.CompareTag("Player"))
+            FindObjectOfType<GameManager>().LoadDeadPanel();
+        else
+        {
+            FindObjectOfType<GameManager>().DieEnemy();
+            Destroy(this.gameObject, 3);
+        }
+    }
+
+
+
+    private void AfterDeath()
+    {
     }
 }
