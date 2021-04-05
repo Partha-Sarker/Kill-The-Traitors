@@ -47,10 +47,10 @@ public class PlayerMovementController : MonoBehaviour
         if (smoothInput.magnitude > 1)
             smoothInput = smoothInput.normalized;
 
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-            DOTween.To(() => speedMultiplier, x => speedMultiplier = x, 2, .3f);
-        else if(Input.GetKeyUp(KeyCode.LeftShift))
-            DOTween.To(() => speedMultiplier, x => speedMultiplier = x, 1, .3f);
+        //if (Input.GetKeyDown(KeyCode.LeftShift))
+        //    DOTween.To(() => speedMultiplier, x => speedMultiplier = x, 2, .3f);
+        //else if(Input.GetKeyUp(KeyCode.LeftShift))
+        //    DOTween.To(() => speedMultiplier, x => speedMultiplier = x, 1, .3f);
 
         animator.SetFloat("motionSpeed", smoothInput.magnitude * speedMultiplier);
 

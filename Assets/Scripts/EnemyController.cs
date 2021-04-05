@@ -46,12 +46,12 @@ public class EnemyController : MonoBehaviour
 
     public void OnTargetEnter(Collider target)
     {
-        if (!target.CompareTag("Player"))
+        if (!target.CompareTag("Target"))
             return;
 
         if (!playerIsOutside)
         {
-            print("Target on outside zone!");
+            print($"Target on outside zone of {transform.name}!");
             playerIsOutside = true;
             SetLooking(target.transform);
             return;
@@ -59,7 +59,7 @@ public class EnemyController : MonoBehaviour
 
         if (!playerIsInside)
         {
-            print("Target on inside zone!");
+            print($"Target on inside zone of {transform.name}!!");
             playerIsInside = true;
             SetAlert(target.transform);
             return;
@@ -75,12 +75,12 @@ public class EnemyController : MonoBehaviour
         if (playerIsInside)
         {
             playerIsInside = false;
-            print("Target on outside zone!");
+            print($"Target on outside zone of {transform.name}!!");
         }
         else if (playerIsOutside)
         {
             playerIsOutside = false;
-            print("Target has escaped enemy zone!");
+            print($"Target has escaped enemy zone of {transform.name}!!");
         }
     }
 
@@ -172,6 +172,7 @@ public class EnemyController : MonoBehaviour
             enemyGun.Shoot(target);
         }
         spine.Rotate(transform.right, aimAngle, Space.World);
+        Debug.DrawLine(rightShoulder.position, target.position);
     }
 
     private bool IsTargetVisible()

@@ -22,7 +22,7 @@ public class GunAndGrenade : WeaponBehaviour
 
     public LayerMask shootingMask;
 
-    private bool isShooting = false, isAiming = false, isRifleDown = false, isReloading;
+    public bool isShooting = false, isAiming = false, isRifleDown = false, isReloading;
 
     private float nextTimeToFire = 0;
 
@@ -55,11 +55,11 @@ public class GunAndGrenade : WeaponBehaviour
             lastActiveTime = Time.time;
         }
 
-        if(Input.GetKeyDown(KeyCode.LeftShift) && !isAiming && !isShooting && !isRifleDown)
-        {
-            isRifleDown = true;
-            animator.SetBool("rifleDown", true);
-        }
+        //if(Input.GetKeyDown(KeyCode.LeftShift) && !isAiming && !isShooting && !isRifleDown)
+        //{
+        //    isRifleDown = true;
+        //    animator.SetBool("rifleDown", true);
+        //}
 
         if (!isRifleDown)
         {
