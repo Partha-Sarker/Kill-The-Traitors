@@ -11,7 +11,7 @@ public class PlayerMovementController : MonoBehaviour
 
     private Rigidbody rb;
 
-    public bool isGrounded;
+    public bool isGrounded, isDead = false;
 
     [Range(0f, 1f)] public float horizontalJumpLimit;
     [SerializeField] private float moveSpeed = 5, jumpForce = 10, rotationHardness = 10;
@@ -99,7 +99,7 @@ public class PlayerMovementController : MonoBehaviour
 
     private void MovePlayer()
     {
-        if (smoothInput.magnitude < .1f || !isGrounded)
+        if (smoothInput.magnitude < .1f || !isGrounded || isDead)
             return;
         rotation = cam.eulerAngles;
         rotation.x = 0;

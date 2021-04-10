@@ -28,9 +28,13 @@ public class Character : MonoBehaviour
         GetComponent<Animator>().SetTrigger("die");
 
         if (transform.CompareTag("Player"))
+        {
+            GetComponent<PlayerMovementController>().isDead = true;
             FindObjectOfType<GameManager>().LoadDeadPanel();
+        }
         else
         {
+            GetComponent<EnemyController>().enabled = false;
             FindObjectOfType<GameManager>().DieEnemy();
             Destroy(this.gameObject, 3);
         }

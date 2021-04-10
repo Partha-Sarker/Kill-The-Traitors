@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadWinPanel()
     {
+        Cursor.visible = true;
         winAudio.Play();
         Invoke("WaitForWinPanel", winDelay);
     }
@@ -38,6 +39,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadDeadPanel()
     {
+        Cursor.visible = true;
         deadAudio.Play();
         Invoke("WaitForDeadPanel", deadDelay);
     }
